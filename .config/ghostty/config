@@ -1,0 +1,16 @@
+font-family = "JetBrains Mono"
+font-size = 14
+
+# left only — keeps right Option for special chars
+macos-option-as-alt = left
+keybind = alt+left=unbind
+keybind = alt+right=unbind
+copy-on-select = true
+shell-integration = fish
+
+confirm-close-surface = false
+mouse-hide-while-typing = true
+cursor-style-blink = true
+
+# quake-mode: requires Accessibility permission in macOS
+keybind = global:cmd+ctrl+shift+j=toggle_visibility
