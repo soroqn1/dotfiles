@@ -41,3 +41,8 @@ map("v", "K", ":m '<-2<cr>gv=gv", { desc = "Move selection up" })
 
 -- Don't lose clipboard when pasting over selection
 map("v", "p", '"_dP', { desc = "Paste without losing clipboard" })
+
+-- Warn on Ctrl+C in normal mode (doesn't quit vim, but confuses muscle memory)
+map("n", "<C-c>", function()
+  vim.notify("Use :q to quit, :w to save", vim.log.levels.WARN, { title = "vim" })
+end, { desc = "Ctrl+C warning" })
