@@ -1,0 +1,22 @@
+## Atuin config
+## Full reference: https://docs.atuin.sh/configuration/config/
+
+## Search mode: fuzzy is best for most people
+search_mode = "fuzzy"
+
+## Filter by current directory by default (switch with Ctrl+R modes)
+filter_mode = "global"
+filter_mode_shell_up_arrow_history = "session"
+
+## Show a preview of the command when browsing history
+show_preview = true
+
+## Press Enter to run immediately, Tab to edit first
+enter_accept = true
+
+## Inline history search (no fullscreen takeover)
+inline_height = 20
+
+## Show exit code, duration, time in columns
+[ui]
+columns = ["exit", "duration", "time", "command"]
