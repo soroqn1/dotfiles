@@ -10,6 +10,7 @@ My personal configuration files for everyday development.
 | [Fish](https://fishshell.com) | Shell |
 | [Tide](https://github.com/IlanCosman/tide) | Fish prompt |
 | [Neovim](https://neovim.io) + [LazyVim](https://lazyvim.org) | Editor |
+| [tmux](https://github.com/tmux/tmux) | Terminal multiplexer |
 | [atuin](https://atuin.sh) | Shell history (fuzzy, Ctrl+R) |
 | [zoxide](https://github.com/ajeetdsouza/zoxide) | Smart directory jumping (`z`) |
 
@@ -77,5 +78,7 @@ ln -sf ~/dotfiles/ghostty ~/.config/ghostty
 ln -sf ~/dotfiles/fish ~/.config/fish
 ln -sf ~/dotfiles/nvim ~/.config/nvim
 ln -sf ~/dotfiles/atuin ~/.config/atuin
+ln -sf ~/dotfiles/tmux/tmux.conf ~/.tmux.conf
 ln -sf ~/dotfiles/bin/copilot-commit.sh ~/.local/bin/copilot-commit.sh
 ```
+
