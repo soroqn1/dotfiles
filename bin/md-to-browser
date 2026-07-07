@@ -1,0 +1,89 @@
+#!/usr/bin/env python3
+import sys
+import os
+import urllib.parse
+import hashlib
+import subprocess
+import shutil
+
+if len(sys.argv) < 2:
+    sys.exit(0)
+
+url = sys.argv[1]
+parsed = urllib.parse.urlsplit(url)
+path = parsed.path if parsed.scheme in ('file', '') else url
+decoded_path = urllib.parse.unquote(path)
+
+if not decoded_path.endswith('.md'):
+    subprocess.run(['open', url])
+    sys.exit(0)
+
+if not os.path.exists(decoded_path):
+    subprocess.run(['open', url])
+    sys.exit(0)
+
+pandoc_path = shutil.which('pandoc')
+if not pandoc_path:
+    sys.stderr.write("Ошибка: pandoc не установлен. Установите его с помощью: brew install pandoc\n")
+    sys.exit(1)
+
+config_dir = os.path.expanduser('~/.config/md-to-browser')
+os.makedirs(config_dir, exist_ok=True)
+
+css_path = os.path.join(config_dir, 'github-markdown.css')
+before_path = os.path.join(config_dir, 'before.html')
+after_path = os.path.join(config_dir, 'after.html')
+
+if not os.path.exists(css_path):
+    import urllib.request
+    try:
+        urllib.request.urlretrieve('https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.8.1/github-markdown.min.css', css_path)
+        with open(css_path, 'a') as f:
+            f.write('\nbody { box-sizing: border-box; min-width: 200px; max-width: 980px; margin: 0 auto; padding: 45px; background-color: var(--bgColor-default); color: var(--fgColor-default); }\n@media (max-width: 767px) { body { padding: 15px; } }\n')
+    except Exception:
+        pass
+
+if not os.path.exists(before_path):
+    with open(before_path, 'w') as f:
+        f.write('<div class="markdown-body">\n')
+
+if not os.path.exists(after_path):
+    with open(after_path, 'w') as f:
+        f.write('</div>\n')
+
+tmp_dir = '/tmp/md-to-browser'
+os.makedirs(tmp_dir, exist_ok=True)
+
+import time
+now = time.time()
+for f in os.listdir(tmp_dir):
+    f_path = os.path.join(tmp_dir, f)
+    if os.path.isfile(f_path) and now - os.path.getmtime(f_path) > 86400:
+        try:
+            os.remove(f_path)
+        except Exception:
+            pass
+
+base_name = os.path.splitext(os.path.basename(decoded_path))[0]
+path_hash = hashlib.md5(decoded_path.encode('utf-8')).hexdigest()
+output_html = os.path.join(tmp_dir, f"{base_name}-{path_hash}.html")
+
+cmd = [
+    'pandoc',
+    '-s',
+    '--embed-resources',
+    '-B', before_path,
+    '-A', after_path,
+    '-c', css_path,
+    '--metadata', f'title={base_name}',
+    '-f', 'markdown',
+    '-t', 'html',
+    '-o', output_html,
+    decoded_path
+]
+
+res = subprocess.run(cmd, capture_output=True)
+if res.returncode != 0:
+    subprocess.run(['open', decoded_path])
+else:
+    subprocess.run(['open', output_html])
