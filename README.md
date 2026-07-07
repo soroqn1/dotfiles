@@ -82,3 +82,12 @@ ln -sf ~/dotfiles/tmux/tmux.conf ~/.tmux.conf
 ln -sf ~/dotfiles/bin/copilot-commit.sh ~/.local/bin/copilot-commit.sh
 ```
 
+### Markdown Preview setup (Cmd+click in Ghostty)
+
+To configure automatic Markdown preview on `Cmd+click` for `file://` links in Ghostty, run the setup script:
+
+```sh
+~/dotfiles/bin/setup-md-to-browser.sh
+```
+
+
