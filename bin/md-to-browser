@@ -6,10 +6,17 @@ import hashlib
 import subprocess
 import shutil
 
+os.environ['PATH'] = f"/opt/homebrew/bin:/usr/local/bin:{os.environ.get('PATH', '')}"
+
 if len(sys.argv) < 2:
     sys.exit(0)
 
 url = sys.argv[1]
+
+if url.startswith('http://') or url.startswith('https://'):
+    subprocess.run(['open', url])
+    sys.exit(0)
+
 parsed = urllib.parse.urlsplit(url)
 path = parsed.path if parsed.scheme in ('file', '') else url
 decoded_path = urllib.parse.unquote(path)
@@ -19,8 +26,8 @@ if not decoded_path.endswith('.md'):
     sys.exit(0)
 
 if not os.path.exists(decoded_path):
-    subprocess.run(['open', url])
-    sys.exit(0)
+    sys.stderr.write(f"File not found: {decoded_path}\n")
+    sys.exit(1)
 
 pandoc_path = shutil.which('pandoc')
 if not pandoc_path:
@@ -84,6 +91,6 @@ cmd = [
 
 res = subprocess.run(cmd, capture_output=True)
 if res.returncode != 0:
-    subprocess.run(['open', decoded_path])
+    subprocess.run(['open', '-a', 'TextEdit', decoded_path])
 else:
     subprocess.run(['open', output_html])
