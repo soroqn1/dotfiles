@@ -5,8 +5,9 @@ local map = vim.keymap.set
 map("n", "<Tab>", "<cmd>BufferLineCycleNext<cr>", { desc = "Next buffer" })
 map("n", "<S-Tab>", "<cmd>BufferLineCyclePrev<cr>", { desc = "Prev buffer" })
 
--- <leader>x to close current buffer (keeps window open)
-map("n", "<leader>x", "<cmd>bp|bd #<cr>", { desc = "Close buffer" })
+map("n", "<leader>w", "<cmd>bd<cr>", { desc = "Close current tab" })
+
+map("n", "<leader>x", "<cmd>bp|bd #<cr>", { desc = "Close buffer (keep layout)" })
 
 -- ─── Windows / Splits ──────────────────────────────────────────────────────
 -- Ctrl+h/j/k/l is already set by LazyVim
@@ -46,3 +47,11 @@ map("v", "p", '"_dP', { desc = "Paste without losing clipboard" })
 map("n", "<C-c>", function()
   vim.notify("Use :q to quit, :w to save", vim.log.levels.WARN, { title = "vim" })
 end, { desc = "Ctrl+C warning" })
+
+map("n", "<C-p>", "<cmd>Telescope find_files<cr>", { desc = "Search files by name" })
+map("n", "<C-f>", "<cmd>Telescope current_buffer_fuzzy_find<cr>", { desc = "Search text in current file" })
+map("n", "<C-g>", "<cmd>Telescope live_grep<cr>", { desc = "Search text in project" })
+map("n", "<C-a>", "ggVG", { desc = "Select all text" })
+
+map("n", "<Esc>", "<cmd>noh<cr><esc>", { desc = "Clear search highlight" })
+

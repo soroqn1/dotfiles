@@ -4,6 +4,10 @@
 
 vim.o.winborder = "rounded"
 
+vim.opt.relativenumber = false
+vim.opt.number = true
+
+
 -- Force rounded borders globally for LSP floating windows (hover, signatures)
 local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
 function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)

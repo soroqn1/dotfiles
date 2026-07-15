@@ -29,7 +29,7 @@ return {
       map("n", "<leader>gr", gs.reset_hunk, "Reset hunk")
       map("n", "<leader>gs", gs.stage_hunk, "Stage hunk")
       map("n", "<leader>gb", gs.blame_line, "Blame line")
-      map("n", "<leader>gd", gs.diffthis, "Diff this")
+
     end,
   },
 }

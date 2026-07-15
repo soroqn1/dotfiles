@@ -24,7 +24,8 @@ My personal configuration files for everyday development.
 | --- | ------ |
 | `Tab` | Next buffer |
 | `Shift+Tab` | Previous buffer |
-| `<leader>x` | Close current buffer |
+| `<leader>w` | Close current tab |
+| `<leader>x` | Close current buffer (keep window layout) |
 
 ### Windows
 
@@ -59,6 +60,20 @@ My personal configuration files for everyday development.
 | `J/K` (visual) | Move selection down / up |
 | `p` (visual) | Paste without losing clipboard |
 | `Ctrl+J` | Accept Copilot suggestion |
+| `Ctrl+p` | Search files by name |
+| `Ctrl+f` | Search text in current file |
+| `Ctrl+g` | Search text in project |
+| `Ctrl+a` | Select all text |
+
+### Explorer (Neo-tree)
+
+| Key | Action |
+| --- | ------ |
+| `<leader>e` | Open/toggle explorer |
+| `n` | Create new file/folder (end with `/` for folder) |
+| `Y` (Shift+y) | Copy file path or filename to clipboard |
+
+
 
 ## Fish abbreviations
 
