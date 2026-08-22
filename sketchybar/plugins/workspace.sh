@@ -222,14 +222,16 @@ for sid in {1..9}; do
       ARGS+=(
         --set "space.$sid"
         icon.color=0xffffffff
-        icon.font="SF Pro:Bold:12.5"
+        icon.font="JetBrainsMono Nerd Font:Bold:12.0"
         icon.padding_left=7
         icon.padding_right=3
+        icon.y_offset=0
         label="$icon"
         label.color=0xffffffff
         label.font="sketchybar-app-font:Regular:13.0"
         label.padding_left=3
         label.padding_right=7
+        label.y_offset=0
         label.drawing=on
         background.color=0x38ffffff
         background.border_color=0x55ffffff
@@ -242,9 +244,10 @@ for sid in {1..9}; do
       ARGS+=(
         --set "space.$sid"
         icon.color=0xffffffff
-        icon.font="SF Pro:Bold:12.5"
+        icon.font="JetBrainsMono Nerd Font:Bold:12.0"
         icon.padding_left=7
         icon.padding_right=7
+        icon.y_offset=0
         label.drawing=off
         background.color=0x38ffffff
         background.border_color=0x55ffffff
@@ -259,14 +262,16 @@ for sid in {1..9}; do
     ARGS+=(
       --set "space.$sid"
       icon.color=0xd0ffffff
-      icon.font="SF Pro:Medium:12.5"
+      icon.font="JetBrainsMono Nerd Font:Bold:12.0"
       icon.padding_left=7
       icon.padding_right=3
+      icon.y_offset=0
       label="$icon"
       label.color=0xd0ffffff
       label.font="sketchybar-app-font:Regular:13.0"
       label.padding_left=3
       label.padding_right=7
+      label.y_offset=0
       label.drawing=on
       background.color=0x14ffffff
       background.border_color=0x20ffffff
@@ -276,13 +281,14 @@ for sid in {1..9}; do
       background.drawing=on
     )
   else
-    # Empty workspace: muted number only, no background
+    # Empty workspace: muted number only, identical font & baseline
     ARGS+=(
       --set "space.$sid"
       icon.color=0x38ffffff
-      icon.font="SF Pro:Regular:12.5"
+      icon.font="JetBrainsMono Nerd Font:Bold:12.0"
       icon.padding_left=6
       icon.padding_right=6
+      icon.y_offset=0
       label.drawing=off
       background.drawing=off
     )
