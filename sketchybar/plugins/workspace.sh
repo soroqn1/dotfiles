@@ -228,6 +228,7 @@ for sid in {1..9}; do
     if [ -n "$icon" ]; then
       ARGS+=(
         --set "space.$sid"
+        drawing=on
         icon.color=0xffffffff
         icon.padding_left=8
         icon.padding_right=4
@@ -244,6 +245,7 @@ for sid in {1..9}; do
     else
       ARGS+=(
         --set "space.$sid"
+        drawing=on
         icon.color=0xffffffff
         icon.padding_left=8
         icon.padding_right=8
@@ -258,6 +260,7 @@ for sid in {1..9}; do
     # Occupied workspace: subtle translucent glass pill
     ARGS+=(
       --set "space.$sid"
+      drawing=on
       icon.color=0xd0ffffff
       icon.padding_left=8
       icon.padding_right=4
@@ -272,14 +275,10 @@ for sid in {1..9}; do
       background.drawing=on
     )
   else
-    # Empty workspace: muted number without pill background
+    # Empty inactive workspace: completely hidden
     ARGS+=(
       --set "space.$sid"
-      icon.color=0x38ffffff
-      icon.padding_left=7
-      icon.padding_right=7
-      label.drawing=off
-      background.drawing=off
+      drawing=off
     )
   fi
 done
