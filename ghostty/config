@@ -10,6 +10,7 @@ shell-integration = fish
 
 confirm-close-surface = true
 mouse-hide-while-typing = true
+mouse-scroll-multiplier = precision:0.6,discrete:2
 cursor-style-blink = true
 
 # quake-mode: requires Accessibility permission in macOS
