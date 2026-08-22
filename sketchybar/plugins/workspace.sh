@@ -172,15 +172,13 @@ declare -A ICON_MAP=(
 # Resolve focused app for the active workspace
 FOCUSED_APP="$(aerospace list-windows --focused --format "%{app-name}" 2>/dev/null)"
 
-# Map exactly one frontmost/relevant app icon per workspace
+# Map frontmost app per workspace
 declare -A SPACE_APPS
 
-# If we have a focused window on the focused workspace, prioritize it
 if [[ -n "$FOCUSED_APP" && -n "$FOCUSED" ]]; then
   SPACE_APPS["$FOCUSED"]="$FOCUSED_APP"
 fi
 
-# Fill in the primary app for other workspaces
 while IFS="|" read -r sid app; do
   [[ -z "$sid" || -z "$app" ]] && continue
   if [[ -z "${SPACE_APPS[$sid]}" ]]; then
@@ -188,33 +186,36 @@ while IFS="|" read -r sid app; do
   fi
 done < <(aerospace list-windows --all --format "%{workspace}|%{app-name}" 2>/dev/null)
 
+# Resolve icon ligature with fallback matching
+get_icon() {
+  local app="$1"
+  local icon="${ICON_MAP[$app]:-}"
+  if [[ -z "$icon" ]]; then
+    local lower="${app,,}"
+    icon="${ICON_MAP[$lower]:-}"
+    if [[ -z "$icon" ]]; then
+      case "$lower" in
+        *dia*) icon=":dia:" ;;
+        *chrome*) icon=":google_chrome:" ;;
+        *ghostty*) icon=":ghostty:" ;;
+        *telegram*) icon=":telegram:" ;;
+        *obsidian*) icon=":obsidian:" ;;
+        *safari*) icon=":safari:" ;;
+        *firefox*) icon=":firefox:" ;;
+        *code*|*cursor*) icon=":code:" ;;
+        *) icon=":default:" ;;
+      esac
+    fi
+  fi
+  echo "$icon"
+}
+
 ARGS=()
 
 for sid in {1..9}; do
   app="${SPACE_APPS[$sid]}"
   is_focused=$([ "$sid" = "$FOCUSED" ] && echo 1 || echo 0)
-
-  if [ -n "$app" ]; then
-    icon="${ICON_MAP[$app]:-}"
-    if [[ -z "$icon" ]]; then
-      app_lower="${app,,}"
-      icon="${ICON_MAP[$app_lower]:-}"
-    fi
-    if [[ -z "$icon" ]]; then
-      if [[ "$app_lower" == *"dia"* ]]; then icon=":dia:"
-      elif [[ "$app_lower" == *"chrome"* ]]; then icon=":google_chrome:"
-      elif [[ "$app_lower" == *"ghostty"* ]]; then icon=":ghostty:"
-      elif [[ "$app_lower" == *"telegram"* ]]; then icon=":telegram:"
-      elif [[ "$app_lower" == *"obsidian"* ]]; then icon=":obsidian:"
-      elif [[ "$app_lower" == *"safari"* ]]; then icon=":safari:"
-      elif [[ "$app_lower" == *"firefox"* ]]; then icon=":firefox:"
-      elif [[ "$app_lower" == *"code"* || "$app_lower" == *"cursor"* ]]; then icon=":code:"
-      else icon=":default:"
-      fi
-    fi
-  else
-    icon=""
-  fi
+  icon=$([ -n "$app" ] && get_icon "$app" || echo "")
 
   if [ "$is_focused" -eq 1 ]; then
     # Active workspace: bright frosted glass pill
@@ -222,78 +223,60 @@ for sid in {1..9}; do
       ARGS+=(
         --set "space.$sid"
         icon.color=0xffffffff
-        icon.font="JetBrainsMono Nerd Font:Bold:12.0"
         icon.padding_left=8
         icon.padding_right=4
-        icon.y_offset=0
         label="$icon"
         label.color=0xffffffff
-        label.font="sketchybar-app-font:Regular:13.0"
         label.padding_left=4
         label.padding_right=8
-        label.y_offset=0
         label.drawing=on
         background.color=0x38ffffff
         background.border_color=0x55ffffff
         background.border_width=1
-        background.height=23
-        background.corner_radius=6
         background.drawing=on
       )
     else
       ARGS+=(
         --set "space.$sid"
         icon.color=0xffffffff
-        icon.font="JetBrainsMono Nerd Font:Bold:12.0"
         icon.padding_left=8
         icon.padding_right=8
-        icon.y_offset=0
         label.drawing=off
         background.color=0x38ffffff
         background.border_color=0x55ffffff
         background.border_width=1
-        background.height=23
-        background.corner_radius=6
         background.drawing=on
       )
     fi
   elif [ -n "$icon" ]; then
-    # Occupied workspace (inactive with windows): subtle translucent glass pill
+    # Occupied workspace: subtle translucent glass pill
     ARGS+=(
       --set "space.$sid"
       icon.color=0xd0ffffff
-      icon.font="JetBrainsMono Nerd Font:Bold:12.0"
       icon.padding_left=8
       icon.padding_right=4
-      icon.y_offset=0
       label="$icon"
       label.color=0xd0ffffff
-      label.font="sketchybar-app-font:Regular:13.0"
       label.padding_left=4
       label.padding_right=8
-      label.y_offset=0
       label.drawing=on
       background.color=0x14ffffff
       background.border_color=0x20ffffff
       background.border_width=1
-      background.height=23
-      background.corner_radius=6
       background.drawing=on
     )
   else
-    # Empty workspace: muted number only, identical font & baseline
+    # Empty workspace: muted number without pill background
     ARGS+=(
       --set "space.$sid"
       icon.color=0x38ffffff
-      icon.font="JetBrainsMono Nerd Font:Bold:12.0"
       icon.padding_left=7
       icon.padding_right=7
-      icon.y_offset=0
       label.drawing=off
       background.drawing=off
     )
   fi
 done
 
-# Apply all changes in a single atomic batch
+# Apply all changes atomically in a single batch
 sketchybar "${ARGS[@]}"
