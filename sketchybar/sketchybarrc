@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+
+CONFIG_DIR="$HOME/.config/sketchybar"
+PLUGIN_DIR="$CONFIG_DIR/plugins"
+
+# Register AeroSpace custom events
+sketchybar --add event aerospace_workspace_change
+sketchybar --add event aerospace_focus_change
+
+# Bar configuration
+# height=32 matches the native macOS menu bar height on MacBook with notch
+sketchybar --bar \
+  height=32 \
+  color=0x00000000 \
+  border_width=0 \
+  blur_radius=0 \
+  y_offset=0 \
+  margin=0 \
+  padding_left=0 \
+  padding_right=340 \
+  position=top \
+  topmost=window
+
+# Global defaults for workspace pills
+sketchybar --default \
+  icon.font="SF Pro:Regular:12.5" \
+  icon.color=0xffffffff \
+  icon.padding_left=7 \
+  icon.padding_right=7 \
+  icon.y_offset=0 \
+  label.drawing=off \
+  label.font="sketchybar-app-font:Regular:13.0" \
+  padding_left=3 \
+  padding_right=3 \
+  background.height=23 \
+  background.corner_radius=6 \
+  background.drawing=off
+
+# Add 9 workspace pills on the right (added in reverse 9..1 so 1 is on the left)
+for sid in 9 8 7 6 5 4 3 2 1; do
+  sketchybar --add item "space.$sid" right \
+    --set "space.$sid" \
+      icon="$sid" \
+      click_script="aerospace workspace $sid"
+done
+
+# Single event observer (eliminates 9x parallel process execution & lag)
+sketchybar --add item space_observer right \
+  --set space_observer \
+    drawing=off \
+    script="$PLUGIN_DIR/workspace.sh" \
+  --subscribe space_observer \
+    aerospace_workspace_change \
+    aerospace_focus_change \
+    front_app_switched \
+    space_windows_change \
+    forced
+
+# Initial update of workspace states
+"$PLUGIN_DIR/workspace.sh"

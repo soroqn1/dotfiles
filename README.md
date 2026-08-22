@@ -13,6 +13,8 @@ My personal configuration files for everyday development.
 | [tmux](https://github.com/tmux/tmux) | Terminal multiplexer |
 | [atuin](https://atuin.sh) | Shell history (fuzzy, Ctrl+R) |
 | [zoxide](https://github.com/ajeetdsouza/zoxide) | Smart directory jumping (`z`) |
+| [AeroSpace](https://nikitabobko.github.io/AeroSpace/) | i3-like tiling window manager for macOS |
+| [SketchyBar](https://felixkratz.github.io/SketchyBar/) | Custom macOS status bar widget |
 
 ## Neovim keybindings
 
@@ -94,6 +96,8 @@ ln -sf ~/dotfiles/fish ~/.config/fish
 ln -sf ~/dotfiles/nvim ~/.config/nvim
 ln -sf ~/dotfiles/atuin ~/.config/atuin
 ln -sf ~/dotfiles/tmux/tmux.conf ~/.tmux.conf
+ln -sf ~/dotfiles/aerospace ~/.config/aerospace
+ln -sf ~/dotfiles/sketchybar ~/.config/sketchybar
 ln -sf ~/dotfiles/bin/copilot-commit.sh ~/.local/bin/copilot-commit.sh
 ```
 
