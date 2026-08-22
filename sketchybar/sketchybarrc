@@ -9,13 +9,13 @@ sketchybar --add event aerospace_focus_change
 
 # Bar configuration
 # padding_left=840 anchors space.1 to the right of the MacBook notch (~825pt)
-# Adding items on 'left' means they expand to the RIGHT when icons appear (away from the notch)
+# y_offset=2 lifts the bar up by 2px to align perfectly with the native macOS menu bar
 sketchybar --bar \
   height=32 \
   color=0x00000000 \
   border_width=0 \
   blur_radius=0 \
-  y_offset=0 \
+  y_offset=2 \
   margin=0 \
   padding_left=840 \
   padding_right=0 \
