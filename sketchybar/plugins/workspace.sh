@@ -1,7 +1,13 @@
 #!/usr/bin/env bash
 
-# Resolve current focused workspace (provided directly by AeroSpace trigger or fast query)
-FOCUSED="${FOCUSED_WORKSPACE:-$(aerospace list-workspaces --focused 2>/dev/null || echo "1")}"
+# Resolve focused workspace directly from event variable (no aerospace CLI call on switch)
+FOCUSED="${FOCUSED_WORKSPACE:-${AEROSPACE_FOCUSED_WORKSPACE:-}}"
+PREV="${PREV_WORKSPACE:-${AEROSPACE_PREV_WORKSPACE:-}}"
+
+# Fallback only if variable is absent (e.g. manual CLI invocation)
+if [[ -z "$FOCUSED" ]]; then
+  FOCUSED="$(aerospace list-workspaces --focused 2>/dev/null || echo "1")"
+fi
 
 # Lookup map for application icons (using sketchybar-app-font ligatures)
 declare -A ICON_MAP=(
