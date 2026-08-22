@@ -225,13 +225,13 @@ for sid in {1..9}; do
         icon.font="JetBrainsMono Nerd Font:Bold:12.0"
         icon.padding_left=8
         icon.padding_right=4
-        icon.y_offset=0
+        icon.y_offset=-1
         label="$icon"
         label.color=0xffffffff
         label.font="sketchybar-app-font:Regular:13.0"
         label.padding_left=4
         label.padding_right=8
-        label.y_offset=0
+        label.y_offset=-1
         label.drawing=on
         background.color=0x38ffffff
         background.border_color=0x55ffffff
@@ -247,7 +247,7 @@ for sid in {1..9}; do
         icon.font="JetBrainsMono Nerd Font:Bold:12.0"
         icon.padding_left=8
         icon.padding_right=8
-        icon.y_offset=0
+        icon.y_offset=-1
         label.drawing=off
         background.color=0x38ffffff
         background.border_color=0x55ffffff
@@ -265,13 +265,13 @@ for sid in {1..9}; do
       icon.font="JetBrainsMono Nerd Font:Bold:12.0"
       icon.padding_left=8
       icon.padding_right=4
-      icon.y_offset=0
+      icon.y_offset=-1
       label="$icon"
       label.color=0xd0ffffff
       label.font="sketchybar-app-font:Regular:13.0"
       label.padding_left=4
       label.padding_right=8
-      label.y_offset=0
+      label.y_offset=-1
       label.drawing=on
       background.color=0x14ffffff
       background.border_color=0x20ffffff
@@ -288,7 +288,7 @@ for sid in {1..9}; do
       icon.font="JetBrainsMono Nerd Font:Bold:12.0"
       icon.padding_left=7
       icon.padding_right=7
-      icon.y_offset=0
+      icon.y_offset=-1
       label.drawing=off
       background.drawing=off
     )
