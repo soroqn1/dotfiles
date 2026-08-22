@@ -223,18 +223,14 @@ for sid in {1..9}; do
         --set "space.$sid"
         icon.color=0xffffffff
         icon.font="JetBrainsMono Nerd Font:Bold:12.0"
-        icon.width=10
-        icon.align=center
-        icon.padding_left=6
-        icon.padding_right=2
+        icon.padding_left=8
+        icon.padding_right=4
         icon.y_offset=0
         label="$icon"
         label.color=0xffffffff
         label.font="sketchybar-app-font:Regular:13.0"
-        label.width=16
-        label.align=center
-        label.padding_left=2
-        label.padding_right=6
+        label.padding_left=4
+        label.padding_right=8
         label.y_offset=0
         label.drawing=on
         background.color=0x38ffffff
@@ -249,10 +245,8 @@ for sid in {1..9}; do
         --set "space.$sid"
         icon.color=0xffffffff
         icon.font="JetBrainsMono Nerd Font:Bold:12.0"
-        icon.width=10
-        icon.align=center
-        icon.padding_left=6
-        icon.padding_right=6
+        icon.padding_left=8
+        icon.padding_right=8
         icon.y_offset=0
         label.drawing=off
         background.color=0x38ffffff
@@ -269,18 +263,14 @@ for sid in {1..9}; do
       --set "space.$sid"
       icon.color=0xd0ffffff
       icon.font="JetBrainsMono Nerd Font:Bold:12.0"
-      icon.width=10
-      icon.align=center
-      icon.padding_left=6
-      icon.padding_right=2
+      icon.padding_left=8
+      icon.padding_right=4
       icon.y_offset=0
       label="$icon"
       label.color=0xd0ffffff
       label.font="sketchybar-app-font:Regular:13.0"
-      label.width=16
-      label.align=center
-      label.padding_left=2
-      label.padding_right=6
+      label.padding_left=4
+      label.padding_right=8
       label.y_offset=0
       label.drawing=on
       background.color=0x14ffffff
@@ -296,10 +286,8 @@ for sid in {1..9}; do
       --set "space.$sid"
       icon.color=0x38ffffff
       icon.font="JetBrainsMono Nerd Font:Bold:12.0"
-      icon.width=10
-      icon.align=center
-      icon.padding_left=6
-      icon.padding_right=6
+      icon.padding_left=7
+      icon.padding_right=7
       icon.y_offset=0
       label.drawing=off
       background.drawing=off
