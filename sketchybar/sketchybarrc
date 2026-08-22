@@ -31,7 +31,7 @@ sketchybar --default \
   icon.y_offset=0 \
   label.drawing=off \
   label.font="sketchybar-app-font:Regular:13.0" \
-  label.y_offset=0 \
+  label.y_offset=1 \
   padding_left=4 \
   padding_right=4 \
   y_offset=1 \
