@@ -17,7 +17,7 @@ sketchybar --bar \
   y_offset=0 \
   margin=0 \
   padding_left=0 \
-  padding_right=340 \
+  padding_right=380 \
   position=top \
   topmost=window
 

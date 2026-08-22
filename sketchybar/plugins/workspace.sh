@@ -169,15 +169,32 @@ declare -A ICON_MAP=(
   ["qBittorrent"]=":qbittorrent:"
 )
 
-# Collect unique app icons per workspace
-declare -A SPACE_APPS
-declare -A SEEN_APPS
+# Resolve focused app for the active workspace
+FOCUSED_APP="$(aerospace list-windows --focused --format "%{app-name}" 2>/dev/null)"
 
+# Map exactly one frontmost/relevant app icon per workspace
+declare -A SPACE_APPS
+
+# If we have a focused window on the focused workspace, prioritize it
+if [[ -n "$FOCUSED_APP" && -n "$FOCUSED" ]]; then
+  SPACE_APPS["$FOCUSED"]="$FOCUSED_APP"
+fi
+
+# Fill in the primary app for other workspaces
 while IFS="|" read -r sid app; do
   [[ -z "$sid" || -z "$app" ]] && continue
-  key="${sid}__${app}"
-  if [[ -z "${SEEN_APPS[$key]}" ]]; then
-    SEEN_APPS[$key]=1
+  if [[ -z "${SPACE_APPS[$sid]}" ]]; then
+    SPACE_APPS["$sid"]="$app"
+  fi
+done < <(aerospace list-windows --all --format "%{workspace}|%{app-name}" 2>/dev/null)
+
+ARGS=()
+
+for sid in {1..9}; do
+  app="${SPACE_APPS[$sid]}"
+  is_focused=$([ "$sid" = "$FOCUSED" ] && echo 1 || echo 0)
+
+  if [ -n "$app" ]; then
     icon="${ICON_MAP[$app]:-}"
     if [[ -z "$icon" ]]; then
       app_lower="${app,,}"
@@ -195,26 +212,20 @@ while IFS="|" read -r sid app; do
       else icon=":default:"
       fi
     fi
-    SPACE_APPS[$sid]="${SPACE_APPS[$sid]}${SPACE_APPS[$sid]:+ }$icon"
+  else
+    icon=""
   fi
-done < <(aerospace list-windows --all --format "%{workspace}|%{app-name}" 2>/dev/null)
-
-ARGS=()
-
-for sid in {1..9}; do
-  apps="${SPACE_APPS[$sid]}"
-  is_focused=$([ "$sid" = "$FOCUSED" ] && echo 1 || echo 0)
 
   if [ "$is_focused" -eq 1 ]; then
     # Active workspace: bright frosted glass pill
-    if [ -n "$apps" ]; then
+    if [ -n "$icon" ]; then
       ARGS+=(
         --set "space.$sid"
         icon.color=0xffffffff
         icon.font="SF Pro:Bold:12.5"
         icon.padding_left=7
         icon.padding_right=3
-        label="$apps"
+        label="$icon"
         label.color=0xffffffff
         label.font="sketchybar-app-font:Regular:13.0"
         label.padding_left=3
@@ -243,7 +254,7 @@ for sid in {1..9}; do
         background.drawing=on
       )
     fi
-  elif [ -n "$apps" ]; then
+  elif [ -n "$icon" ]; then
     # Occupied workspace (inactive with windows): subtle translucent glass pill
     ARGS+=(
       --set "space.$sid"
@@ -251,7 +262,7 @@ for sid in {1..9}; do
       icon.font="SF Pro:Medium:12.5"
       icon.padding_left=7
       icon.padding_right=3
-      label="$apps"
+      label="$icon"
       label.color=0xd0ffffff
       label.font="sketchybar-app-font:Regular:13.0"
       label.padding_left=3
