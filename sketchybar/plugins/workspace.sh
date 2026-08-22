@@ -35,6 +35,9 @@ declare -A ICON_MAP=(
   ["Godot"]=":godot:"
 
   # Browsers
+  ["Dia"]=":dia:"
+  ["dia"]=":dia:"
+  ["company.thebrowser.dia"]=":dia:"
   ["Safari"]=":safari:"
   ["Safari Technology Preview"]=":safari:"
   ["Google Chrome"]=":google_chrome:"
@@ -53,9 +56,9 @@ declare -A ICON_MAP=(
   ["Opera"]=":opera:"
   ["Tor Browser"]=":tor_browser:"
   ["Orion"]=":orion:"
-  ["Yandex Browser"]=":yandex_bower:"
-  ["Yandex"]=":yandex_bower:"
-  ["Dia"]=":browser:"
+  ["Yandex Browser"]=":yandex_browser:"
+  ["Yandex"]=":yandex_browser:"
+  ["Yandex Browser"]=":yandex_browser:"
 
   # Communication & Social
   ["Telegram"]=":telegram:"
@@ -157,7 +160,7 @@ declare -A ICON_MAP=(
   ["Tower"]=":tower:"
   ["Raycast"]=":raycast:"
   ["Calculator"]=":calculator:"
-  ["Preview"]=":pdf:"
+  ["Preview"]=":preview:"
   ["PDF Expert"]=":pdf_expert:"
   ["CleanMyMac X"]=":desktop:"
   ["Pearcleaner"]=":pearcleaner:"
@@ -175,7 +178,23 @@ while IFS="|" read -r sid app; do
   key="${sid}__${app}"
   if [[ -z "${SEEN_APPS[$key]}" ]]; then
     SEEN_APPS[$key]=1
-    icon="${ICON_MAP[$app]:-:default:}"
+    icon="${ICON_MAP[$app]:-}"
+    if [[ -z "$icon" ]]; then
+      app_lower="${app,,}"
+      icon="${ICON_MAP[$app_lower]:-}"
+    fi
+    if [[ -z "$icon" ]]; then
+      if [[ "$app_lower" == *"dia"* ]]; then icon=":dia:"
+      elif [[ "$app_lower" == *"chrome"* ]]; then icon=":google_chrome:"
+      elif [[ "$app_lower" == *"ghostty"* ]]; then icon=":ghostty:"
+      elif [[ "$app_lower" == *"telegram"* ]]; then icon=":telegram:"
+      elif [[ "$app_lower" == *"obsidian"* ]]; then icon=":obsidian:"
+      elif [[ "$app_lower" == *"safari"* ]]; then icon=":safari:"
+      elif [[ "$app_lower" == *"firefox"* ]]; then icon=":firefox:"
+      elif [[ "$app_lower" == *"code"* || "$app_lower" == *"cursor"* ]]; then icon=":code:"
+      else icon=":default:"
+      fi
+    fi
     SPACE_APPS[$sid]="${SPACE_APPS[$sid]}${SPACE_APPS[$sid]:+ }$icon"
   fi
 done < <(aerospace list-windows --all --format "%{workspace}|%{app-name}" 2>/dev/null)
