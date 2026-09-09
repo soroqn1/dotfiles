@@ -96,7 +96,6 @@ ln -sf ~/dotfiles/fish ~/.config/fish
 ln -sf ~/dotfiles/nvim ~/.config/nvim
 ln -sf ~/dotfiles/atuin ~/.config/atuin
 ln -sf ~/dotfiles/tmux/tmux.conf ~/.tmux.conf
-ln -sf ~/dotfiles/aerospace ~/.config/aerospace
 ln -sf ~/dotfiles/sketchybar ~/.config/sketchybar
 ln -sf ~/dotfiles/bin/copilot-commit.sh ~/.local/bin/copilot-commit.sh
 ```

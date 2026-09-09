@@ -1,15 +1,55 @@
 #!/usr/bin/env bash
 
-# Resolve focused workspace directly from event variable (no aerospace CLI call on switch)
-FOCUSED="${FOCUSED_WORKSPACE:-${AEROSPACE_FOCUSED_WORKSPACE:-}}"
-PREV="${PREV_WORKSPACE:-${AEROSPACE_PREV_WORKSPACE:-}}"
-
-# Fallback only if variable is absent (e.g. manual CLI invocation)
-if [[ -z "$FOCUSED" ]]; then
-  FOCUSED="$(aerospace list-workspaces --focused 2>/dev/null || echo "1")"
+if [ "$1" = "click" ]; then
+  TARGET_SID="${2:-$SID}"
+  # macOS Mission Control keycodes for 1..10 (^1 .. ^0)
+  case "$TARGET_SID" in
+    1) KEY=18 ;; 2) KEY=19 ;; 3) KEY=20 ;; 4) KEY=21 ;; 5) KEY=23 ;;
+    6) KEY=22 ;; 7) KEY=26 ;; 8) KEY=28 ;; 9) KEY=25 ;; 10) KEY=29 ;;
+  esac
+  if [ -n "$KEY" ]; then
+    osascript -e "tell application \"System Events\" to key code $KEY using control down" 2>/dev/null
+  fi
+  exit 0
 fi
 
-# Lookup map for application icons (using sketchybar-app-font ligatures)
+STATE_DIR="/tmp/sketchybar_native_spaces"
+mkdir -p "$STATE_DIR"
+
+NAME="${NAME:-space.$1}"
+SID="${SID:-${NAME#space.}}"
+
+if [ "$SENDER" = "space_windows_change" ]; then
+  event_space=$(echo "$INFO" | jq -r '.space // empty' 2>/dev/null)
+  if [ -n "$event_space" ] && [ "$event_space" != "$SID" ]; then
+    exit 0
+  fi
+  new_app=$(echo "$INFO" | jq -r '(.apps | keys) as $k | ($k - ["Finder"] | .[0]) // $k[0] // empty' 2>/dev/null)
+  if [ -n "$new_app" ] && [ "$new_app" != "null" ]; then
+    echo "$new_app" > "$STATE_DIR/app_$SID"
+    APP="$new_app"
+  else
+    rm -f "$STATE_DIR/app_$SID"
+    APP=""
+  fi
+elif [ "$SENDER" = "front_app_switched" ]; then
+  if [ "$SELECTED" = "true" ]; then
+    APP="$INFO"
+    echo "$APP" > "$STATE_DIR/app_$SID"
+  else
+    exit 0
+  fi
+fi
+
+if [ -z "$APP" ] && [ -f "$STATE_DIR/app_$SID" ]; then
+  APP=$(cat "$STATE_DIR/app_$SID" 2>/dev/null)
+fi
+
+if [ -z "$APP" ] && [ "$SELECTED" = "true" ]; then
+  APP=$(lsappinfo info -only name -app "$(lsappinfo front 2>/dev/null)" 2>/dev/null | cut -d'"' -f4)
+  [ -n "$APP" ] && echo "$APP" > "$STATE_DIR/app_$SID"
+fi
+
 declare -A ICON_MAP=(
   # Terminals & Editors
   ["Ghostty"]=":ghostty:"
@@ -175,23 +215,6 @@ declare -A ICON_MAP=(
   ["qBittorrent"]=":qbittorrent:"
 )
 
-# Resolve focused app for the active workspace
-FOCUSED_APP="$(aerospace list-windows --focused --format "%{app-name}" 2>/dev/null)"
-
-# Map frontmost app per workspace
-declare -A SPACE_APPS
-
-if [[ -n "$FOCUSED_APP" && -n "$FOCUSED" ]]; then
-  SPACE_APPS["$FOCUSED"]="$FOCUSED_APP"
-fi
-
-while IFS="|" read -r sid app; do
-  [[ -z "$sid" || -z "$app" ]] && continue
-  if [[ -z "${SPACE_APPS[$sid]}" ]]; then
-    SPACE_APPS["$sid"]="$app"
-  fi
-done < <(aerospace list-windows --all --format "%{workspace}|%{app-name}" 2>/dev/null)
-
 # Resolve icon ligature with fallback matching
 get_icon() {
   local app="$1"
@@ -216,72 +239,58 @@ get_icon() {
   echo "$icon"
 }
 
-ARGS=()
+icon=$([ -n "$APP" ] && get_icon "$APP" || echo "")
 
-for sid in {1..9}; do
-  app="${SPACE_APPS[$sid]}"
-  is_focused=$([ "$sid" = "$FOCUSED" ] && echo 1 || echo 0)
-  icon=$([ -n "$app" ] && get_icon "$app" || echo "")
-
-  if [ "$is_focused" -eq 1 ]; then
-    # Active workspace: bright frosted glass pill
-    if [ -n "$icon" ]; then
-      ARGS+=(
-        --set "space.$sid"
-        drawing=on
-        icon.color=0xffffffff
-        icon.padding_left=8
-        icon.padding_right=4
-        label="$icon"
-        label.color=0xffffffff
-        label.padding_left=4
-        label.padding_right=8
-        label.drawing=on
-        background.color=0x38ffffff
-        background.border_color=0x55ffffff
-        background.border_width=1
-        background.drawing=on
-      )
-    else
-      ARGS+=(
-        --set "space.$sid"
-        drawing=on
-        icon.color=0xffffffff
-        icon.padding_left=8
-        icon.padding_right=8
-        label.drawing=off
-        background.color=0x38ffffff
-        background.border_color=0x55ffffff
-        background.border_width=1
-        background.drawing=on
-      )
-    fi
-  elif [ -n "$icon" ]; then
-    # Occupied workspace: subtle translucent glass pill
-    ARGS+=(
-      --set "space.$sid"
-      drawing=on
-      icon.color=0xd0ffffff
-      icon.padding_left=8
-      icon.padding_right=4
-      label="$icon"
-      label.color=0xd0ffffff
-      label.padding_left=4
-      label.padding_right=8
-      label.drawing=on
-      background.color=0x14ffffff
-      background.border_color=0x20ffffff
-      background.border_width=1
+if [ "$SELECTED" = "true" ]; then
+  if [ -n "$icon" ]; then
+    sketchybar --set "$NAME" \
+      icon.color=0xffffffff \
+      icon.padding_left=8 \
+      icon.padding_right=4 \
+      label="$icon" \
+      label.color=0xffffffff \
+      label.padding_left=4 \
+      label.padding_right=8 \
+      label.drawing=on \
+      background.color=0x38ffffff \
+      background.border_color=0x55ffffff \
+      background.border_width=1 \
       background.drawing=on
-    )
   else
-    # Empty inactive workspace: completely hidden
-    ARGS+=(
-      --set "space.$sid"
-      drawing=off
-    )
+    sketchybar --set "$NAME" \
+      icon.color=0xffffffff \
+      icon.padding_left=8 \
+      icon.padding_right=8 \
+      label.drawing=off \
+      background.color=0x38ffffff \
+      background.border_color=0x55ffffff \
+      background.border_width=1 \
+      background.drawing=on
   fi
-done
-
-# Apply all changes atomically in a single batch
-sketchybar "${ARGS[@]}"
+else
+  if [ -n "$icon" ]; then
+    sketchybar --set "$NAME" \
+      icon.color=0xd0ffffff \
+      icon.padding_left=8 \
+      icon.padding_right=4 \
+      label="$icon" \
+      label.color=0xd0ffffff \
+      label.padding_left=4 \
+      label.padding_right=8 \
+      label.drawing=on \
+      background.color=0x14ffffff \
+      background.border_color=0x20ffffff \
+      background.border_width=1 \
+      background.drawing=on
+  else
+    sketchybar --set "$NAME" \
+      icon.color=0xd0ffffff \
+      icon.padding_left=8 \
+      icon.padding_right=8 \
+      label.drawing=off \
+      background.color=0x14ffffff \
+      background.border_color=0x20ffffff \
+      background.border_width=1 \
+      background.drawing=on
+  fi
+fi
