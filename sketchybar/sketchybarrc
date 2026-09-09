@@ -39,17 +39,23 @@ for sid in {1..10}; do
     --set "space.$sid" \
       associated_space=$sid \
       icon="$sid" \
-      icon.color=0xd0ffffff \
+      icon.color=0x90ffffff \
       icon.padding_left=8 \
       icon.padding_right=8 \
       background.color=0x14ffffff \
       background.border_color=0x20ffffff \
       background.border_width=1 \
       background.drawing=on \
-      updates=on \
-      script="$PLUGIN_DIR/workspace.sh" \
-      click_script="$PLUGIN_DIR/workspace.sh click $sid" \
-    --subscribe "space.$sid" space_windows_change front_app_switched
+      click_script="$PLUGIN_DIR/workspace.sh click $sid"
 done
 
-sketchybar --trigger space_change
+# Central observer for atomic batch updates across all spaces
+sketchybar --add item space_observer left \
+  --set space_observer \
+    drawing=off \
+    updates=on \
+    update_freq=5 \
+    script="$PLUGIN_DIR/workspace.sh" \
+  --subscribe space_observer space_change space_windows_change front_app_switched display_change system_woke
+
+"$PLUGIN_DIR/workspace.sh"
