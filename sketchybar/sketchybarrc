@@ -19,11 +19,14 @@ sketchybar --bar \
 sketchybar --default \
   icon.font="JetBrainsMono Nerd Font:Bold:12.0" \
   icon.color=0xffffffff \
+  icon.highlight_color=0xffffffff \
   icon.padding_left=7 \
   icon.padding_right=7 \
   icon.y_offset=1 \
   label.drawing=off \
   label.font="sketchybar-app-font:Regular:13.0" \
+  label.color=0xffffffff \
+  label.highlight_color=0xffffffff \
   label.y_offset=1 \
   padding_left=4 \
   padding_right=4 \
@@ -39,7 +42,8 @@ for sid in {1..10}; do
     --set "space.$sid" \
       associated_space=$sid \
       icon="$sid" \
-      icon.color=0xd0ffffff \
+      icon.color=0x90ffffff \
+      icon.highlight_color=0xffffffff \
       icon.padding_left=8 \
       icon.padding_right=8 \
       background.color=0x14ffffff \
