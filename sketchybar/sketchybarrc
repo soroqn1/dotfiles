@@ -39,7 +39,7 @@ for sid in {1..10}; do
     --set "space.$sid" \
       associated_space=$sid \
       icon="$sid" \
-      icon.color=0x90ffffff \
+      icon.color=0xd0ffffff \
       icon.padding_left=8 \
       icon.padding_right=8 \
       background.color=0x14ffffff \

@@ -356,8 +356,8 @@ while IFS="|" read -r sid is_active apps_str; do
         label.padding_left=4
         label.padding_right=8
         label.drawing=on
-        background.color=0x355bcde0
-        background.border_color=0xff5bcde0
+        background.color=0x38ffffff
+        background.border_color=0x55ffffff
         background.border_width=1
         background.drawing=on
       )
@@ -368,8 +368,8 @@ while IFS="|" read -r sid is_active apps_str; do
         icon.padding_left=8
         icon.padding_right=8
         label.drawing=off
-        background.color=0x355bcde0
-        background.border_color=0xff5bcde0
+        background.color=0x38ffffff
+        background.border_color=0x55ffffff
         background.border_width=1
         background.drawing=on
       )
@@ -378,11 +378,11 @@ while IFS="|" read -r sid is_active apps_str; do
     if [ -n "$label_str" ]; then
       ARGS+=(
         --set "space.$sid"
-        icon.color=0x90ffffff
+        icon.color=0xd0ffffff
         icon.padding_left=8
         icon.padding_right=4
         label="$label_str"
-        label.color=0x90ffffff
+        label.color=0xd0ffffff
         label.padding_left=4
         label.padding_right=8
         label.drawing=on
@@ -394,7 +394,7 @@ while IFS="|" read -r sid is_active apps_str; do
     else
       ARGS+=(
         --set "space.$sid"
-        icon.color=0x90ffffff
+        icon.color=0xd0ffffff
         icon.padding_left=8
         icon.padding_right=8
         label.drawing=off
