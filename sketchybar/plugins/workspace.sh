@@ -1,8 +1,19 @@
 #!/usr/bin/env bash
 
+STATE_DIR="/tmp/sketchybar_native_spaces"
+mkdir -p "$STATE_DIR"
+
 if [ "$1" = "click" ]; then
   TARGET_SID="${2:-$SID}"
-  # macOS Mission Control keycodes for 1..10 (^1 .. ^0)
+  OLD_FOCUSED=$(cat "$STATE_DIR/focused" 2>/dev/null || echo 1)
+  if [ "$TARGET_SID" != "$OLD_FOCUSED" ]; then
+    echo "$TARGET_SID" > "$STATE_DIR/focused"
+    sketchybar \
+      --set "space.$OLD_FOCUSED" background.color=0x14ffffff background.border_color=0x20ffffff icon.color=0x90ffffff label.color=0x90ffffff icon.highlight=off \
+      --set "space.$TARGET_SID" background.color=0x38ffffff background.border_color=0x55ffffff icon.color=0xffffffff label.color=0xffffffff icon.highlight=off
+  fi
+
+  # macOS Mission Control keycodes (^1..^0)
   case "$TARGET_SID" in
     1) KEY=18 ;; 2) KEY=19 ;; 3) KEY=20 ;; 4) KEY=21 ;; 5) KEY=23 ;;
     6) KEY=22 ;; 7) KEY=26 ;; 8) KEY=28 ;; 9) KEY=25 ;; 10) KEY=29 ;;
@@ -13,131 +24,26 @@ if [ "$1" = "click" ]; then
   exit 0
 fi
 
-STATE_DIR="/tmp/sketchybar_native_spaces"
-mkdir -p "$STATE_DIR"
-STATE_FILE="$STATE_DIR/state.json"
-[ -f "$STATE_FILE" ] || echo '{"focused":1,"recent":{},"apps":{}}' > "$STATE_FILE"
+# Instant space switch (<10ms) without process overhead
+if [ "$SENDER" = "space_change" ]; then
+  FOCUSED="${INFO##*\"display-1\": }"
+  FOCUSED="${FOCUSED%%\}*}"
+  FOCUSED="${FOCUSED//[[:space:]]/}"
+  [ -z "$FOCUSED" ] && exit 0
 
-# Acquire file lock to serialize concurrent updates
-LOCK_DIR="$STATE_DIR/.lock"
-for ((i=0; i<40; i++)); do
-  if mkdir "$LOCK_DIR" 2>/dev/null; then
-    break
+  OLD_FOCUSED=$(cat "$STATE_DIR/focused" 2>/dev/null || echo "")
+  [ "$FOCUSED" = "$OLD_FOCUSED" ] && exit 0
+  echo "$FOCUSED" > "$STATE_DIR/focused"
+
+  if [ -n "$OLD_FOCUSED" ]; then
+    sketchybar \
+      --set "space.$OLD_FOCUSED" background.color=0x14ffffff background.border_color=0x20ffffff icon.color=0x90ffffff label.color=0x90ffffff icon.highlight=off \
+      --set "space.$FOCUSED" background.color=0x38ffffff background.border_color=0x55ffffff icon.color=0xffffffff label.color=0xffffffff icon.highlight=off
+  else
+    sketchybar \
+      --set "space.$FOCUSED" background.color=0x38ffffff background.border_color=0x55ffffff icon.color=0xffffffff label.color=0xffffffff icon.highlight=off
   fi
-  sleep 0.005
-done
-if [ "$i" -ge 40 ]; then
-  rmdir "$LOCK_DIR" 2>/dev/null || true
-  mkdir "$LOCK_DIR" 2>/dev/null || true
-fi
-trap 'rmdir "$LOCK_DIR" 2>/dev/null' EXIT
-
-SPACE_INFO=$(defaults read com.apple.spaces SpacesDisplayConfiguration 2>/dev/null | awk '
-/Monitors =/ { in_monitors=1 }
-in_monitors && /"Current Space"/ { in_curr=1 }
-in_curr && /ManagedSpaceID =/ { curr_id=$3; gsub(";", "", curr_id); in_curr=0 }
-in_monitors && /Spaces =/ { in_spaces=1 }
-in_spaces && /ManagedSpaceID =/ {
-  total++
-  id=$3; gsub(";", "", id)
-  if (id == curr_id) { curr=total }
-}
-in_spaces && /\);/ { exit }
-END { print (total ? total : 1) " " (curr ? curr : 1) }
-')
-read -r TOTAL_SPACES FALLBACK_FOCUSED <<< "$SPACE_INFO"
-
-FRONT_APP=""
-if [ -z "$SENDER" ] || [ "$SENDER" = "space_change" ]; then
-  FRONT_APP=$(lsappinfo info -only name -app "$(lsappinfo front 2>/dev/null)" 2>/dev/null | cut -d'"' -f4)
-fi
-
-# Dynamic max icons based on total active spaces
-if [ "${TOTAL_SPACES:-1}" -le 4 ]; then
-  MAX_ICONS=3
-elif [ "${TOTAL_SPACES:-1}" -le 6 ]; then
-  MAX_ICONS=2
-else
-  MAX_ICONS=1
-fi
-
-OUT=$(jq -r -n \
-  --slurpfile state_arr "$STATE_FILE" \
-  --arg sender "$SENDER" \
-  --arg info "$INFO" \
-  --arg fallback_focused "${FALLBACK_FOCUSED:-1}" \
-  --arg front_app "$FRONT_APP" \
-  --argjson max_icons "$MAX_ICONS" \
-  '
-  ["loginwindow", "WindowServer", "Dock", "SystemUIServer", "ControlCenter", "NotificationCenter", "Spotlight", "universalaccessd"] as $sys |
-  (($state_arr[0] // {}) | if type == "object" then . else {} end) as $st |
-  ($st + {
-    "focused": ($st.focused // ($fallback_focused | tonumber) // 1),
-    "recent": ($st.recent // {}),
-    "apps": ($st.apps // {})
-  }) as $state |
-  ($info | try fromjson catch $info) as $pinfo |
-  (if $sender == "space_change" then
-     ($pinfo."display-1" // ($pinfo | try (to_entries[0].value) catch null) // $state.focused)
-   else
-     $state.focused
-   end | tonumber) as $new_focused |
-  ($new_focused | tostring) as $fkey |
-  (if ($front_app | length > 0) and ($sys | index($front_app) | not) then
-     (if ($state.recent[$fkey] // "") == "" then
-        $state.recent + { ($fkey): $front_app }
-      else
-        $state.recent
-      end)
-   else
-     $state.recent
-   end) as $base_recent |
-  (if $sender == "front_app_switched" and ($info | length > 0) and ($sys | index($info) | not) then
-     $base_recent + { ($fkey): $info }
-   else
-     $base_recent
-   end) as $new_recent |
-  (if ($front_app | length > 0) and ($sys | index($front_app) | not) then
-     (if ($state.apps[$fkey] // {}) == {} then
-        $state.apps + { ($fkey): { ($front_app): 1 } }
-      else
-        $state.apps
-      end)
-   else
-     $state.apps
-   end) as $base_apps |
-  (if $sender == "space_windows_change" and ($pinfo | type == "object") and ($pinfo.space != null) then
-     $base_apps + { ($pinfo.space | tostring): ($pinfo.apps // {}) }
-   else
-     $base_apps
-   end) as $new_apps |
-  {
-    "focused": $new_focused,
-    "recent": $new_recent,
-    "apps": $new_apps
-  } as $updated_state |
-  ($updated_state | tojson),
-  ([range(1; 11)] | map(
-    . as $sid |
-    ($sid | tostring) as $skey |
-    ($updated_state.apps[$skey] // {}) as $raw_apps |
-    (($raw_apps | to_entries | map(select(.value > 0)) | map(.key)) - $sys) as $raw |
-    ($updated_state.recent[$skey] // "") as $rec |
-    ($sid == $updated_state.focused) as $is_focused |
-    (if ($raw | length) == 0 and $is_focused and $rec != "" then [$rec] else $raw end) as $all |
-    (if ($all | length) > 1 then ($all - ["Finder"]) else $all end) as $filtered |
-    (if ($rec != "" and ($filtered | index($rec))) then
-       [$rec] + ($filtered - [$rec])
-     else
-       $filtered
-     end) as $ordered |
-    "\($sid)|\($is_focused)|\($ordered[0:$max_icons] | join(";"))"
-  )[])
-  ')
-
-read -r NEW_STATE <<< "$OUT"
-if [ -n "$NEW_STATE" ]; then
-  echo "$NEW_STATE" > "$STATE_FILE.tmp" && mv "$STATE_FILE.tmp" "$STATE_FILE"
+  exit 0
 fi
 
 declare -A ICON_MAP=(
@@ -308,6 +214,7 @@ declare -A ICON_MAP=(
 # Resolve icon ligature with fallback matching
 get_icon() {
   local app="$1"
+  [ -z "$app" ] && return
   local icon="${ICON_MAP[$app]:-}"
   if [[ -z "$icon" ]]; then
     local lower="${app,,}"
@@ -329,96 +236,164 @@ get_icon() {
   echo "$icon"
 }
 
-ARGS=()
-while IFS="|" read -r sid is_active apps_str; do
-  [ -z "$sid" ] && continue
-  icons=()
-  if [ -n "$apps_str" ]; then
-    IFS=";" read -ra apps <<< "$apps_str"
-    for app in "${apps[@]}"; do
-      if [ -n "$app" ]; then
-        icon=$(get_icon "$app")
-        [ -n "$icon" ] && icons+=("$icon")
-      fi
-    done
+get_total_spaces() {
+  local cache_file="$STATE_DIR/total_spaces"
+  if [ ! -f "$cache_file" ] || [ $(($(date +%s) - $(stat -f %m "$cache_file" 2>/dev/null || echo 0))) -gt 10 ]; then
+    local count
+    count=$(defaults read com.apple.spaces SpacesDisplayConfiguration 2>/dev/null | awk '/Spaces =/ { in_spaces=1; next } in_spaces && /ManagedSpaceID/ { c++ } in_spaces && /\);/ { exit } END { print (c ? c : 1) }')
+    echo "${count:-1}" > "$cache_file"
   fi
-  label_str="${icons[*]}"
+  cat "$cache_file"
+}
 
-  if [ "$is_active" = "true" ]; then
-    if [ -n "$label_str" ]; then
-      ARGS+=(
-        --set "space.$sid"
-        icon.color=0xffffffff
-        icon.highlight_color=0xffffffff
-        icon.highlight=off
-        icon.padding_left=8
-        icon.padding_right=4
-        label="$label_str"
-        label.color=0xffffffff
-        label.highlight_color=0xffffffff
-        label.highlight=off
-        label.padding_left=4
-        label.padding_right=8
-        label.drawing=on
-        background.color=0x38ffffff
-        background.border_color=0x55ffffff
-        background.border_width=1
-        background.drawing=on
-      )
-    else
-      ARGS+=(
-        --set "space.$sid"
-        icon.color=0xffffffff
-        icon.highlight_color=0xffffffff
-        icon.highlight=off
-        icon.padding_left=8
-        icon.padding_right=8
-        label.drawing=off
-        background.color=0x38ffffff
-        background.border_color=0x55ffffff
-        background.border_width=1
-        background.drawing=on
-      )
+update_space_label() {
+  local sid="$1"
+  local total_spaces
+  total_spaces=$(get_total_spaces)
+
+  local max_icons=1
+  if [ "$total_spaces" -le 4 ]; then
+    max_icons=3
+  elif [ "$total_spaces" -le 6 ]; then
+    max_icons=2
+  fi
+
+  local apps_json="{}"
+  if [ -s "$STATE_DIR/apps_$sid" ]; then
+    apps_json=$(cat "$STATE_DIR/apps_$sid")
+    [ -z "$apps_json" ] && apps_json="{}"
+  fi
+  local recent=""
+  [ -f "$STATE_DIR/recent_$sid" ] && recent=$(cat "$STATE_DIR/recent_$sid")
+
+  local app_list
+  app_list=$(jq -r -n \
+    --argjson apps "$apps_json" \
+    --arg recent "$recent" \
+    --argjson max_icons "$max_icons" \
+    '
+    ["loginwindow", "WindowServer", "Dock", "SystemUIServer", "ControlCenter", "NotificationCenter", "Spotlight", "universalaccessd"] as $sys |
+    (($apps | to_entries | map(select(.value > 0)) | map(.key)) - $sys) as $raw |
+    (if ($raw | length) == 0 and $recent != "" and ($sys | index($recent) | not) then [$recent] else $raw end) as $all |
+    (if ($all | length) > 1 then ($all - ["Finder"]) else $all end) as $filtered |
+    (if ($recent != "" and ($filtered | index($recent))) then
+       [$recent] + ($filtered - [$recent])
+     else
+       $filtered
+     end) as $ordered |
+    $ordered[0:$max_icons][]
+    ' 2>/dev/null)
+
+  local icons=()
+  while IFS= read -r app; do
+    if [ -n "$app" ]; then
+      icon=$(get_icon "$app")
+      [ -n "$icon" ] && icons+=("$icon")
     fi
+  done <<< "$app_list"
+
+  local label_str="${icons[*]}"
+  if [ -n "$label_str" ]; then
+    sketchybar --set "space.$sid" \
+      icon.padding_left=8 \
+      icon.padding_right=4 \
+      label="$label_str" \
+      label.padding_left=4 \
+      label.padding_right=8 \
+      label.drawing=on
   else
-    if [ -n "$label_str" ]; then
-      ARGS+=(
-        --set "space.$sid"
-        icon.color=0x90ffffff
-        icon.highlight_color=0xffffffff
-        icon.highlight=off
-        icon.padding_left=8
-        icon.padding_right=4
-        label="$label_str"
-        label.color=0x90ffffff
-        label.highlight_color=0xffffffff
-        label.highlight=off
-        label.padding_left=4
-        label.padding_right=8
-        label.drawing=on
-        background.color=0x14ffffff
-        background.border_color=0x20ffffff
-        background.border_width=1
-        background.drawing=on
-      )
-    else
-      ARGS+=(
-        --set "space.$sid"
-        icon.color=0x90ffffff
-        icon.highlight_color=0xffffffff
-        icon.highlight=off
-        icon.padding_left=8
-        icon.padding_right=8
-        label.drawing=off
-        background.color=0x14ffffff
-        background.border_color=0x20ffffff
-        background.border_width=1
-        background.drawing=on
-      )
-    fi
+    sketchybar --set "space.$sid" \
+      icon.padding_left=8 \
+      icon.padding_right=8 \
+      label.drawing=off
   fi
-done < <(tail -n +2 <<< "$OUT")
+}
 
-if [ "${#ARGS[@]}" -gt 0 ]; then
-  sketchybar "${ARGS[@]}"
+if [ "$SENDER" = "front_app_switched" ]; then
+  APP="$INFO"
+  case "$APP" in
+    ""|loginwindow|WindowServer|Dock|SystemUIServer|ControlCenter|NotificationCenter|Spotlight|universalaccessd)
+      exit 0
+      ;;
+  esac
+
+  FOCUSED=$(cat "$STATE_DIR/focused" 2>/dev/null || echo 1)
+  OLD_APP=$(cat "$STATE_DIR/recent_$FOCUSED" 2>/dev/null || echo "")
+  [ "$APP" = "$OLD_APP" ] && exit 0
+  echo "$APP" > "$STATE_DIR/recent_$FOCUSED"
+
+  update_space_label "$FOCUSED"
+  exit 0
 fi
+
+if [ "$SENDER" = "space_windows_change" ]; then
+  EVENT_SPACE=$(jq -r '.space // empty' <<< "$INFO" 2>/dev/null)
+  [ -z "$EVENT_SPACE" ] && exit 0
+
+  APPS_JSON=$(jq -c '.apps // {}' <<< "$INFO" 2>/dev/null)
+  OLD_APPS_JSON=$(cat "$STATE_DIR/apps_$EVENT_SPACE" 2>/dev/null || echo "")
+  [ "$APPS_JSON" = "$OLD_APPS_JSON" ] && exit 0
+  echo "$APPS_JSON" > "$STATE_DIR/apps_$EVENT_SPACE"
+
+  update_space_label "$EVENT_SPACE"
+  exit 0
+fi
+
+# Initial startup / sync
+FOCUSED=$(defaults read com.apple.spaces SpacesDisplayConfiguration 2>/dev/null | awk '
+/Monitors =/ { in_monitors=1 }
+in_monitors && /"Current Space"/ { in_curr=1 }
+in_curr && /ManagedSpaceID =/ { curr_id=$3; gsub(";", "", curr_id); in_curr=0 }
+in_monitors && /Spaces =/ { in_spaces=1 }
+in_spaces && /ManagedSpaceID =/ {
+  total++
+  id=$3; gsub(";", "", id)
+  if (id == curr_id) { curr=total }
+}
+in_spaces && /\);/ { exit }
+END { print (curr ? curr : 1) }
+')
+echo "${FOCUSED:-1}" > "$STATE_DIR/focused"
+
+FRONT_APP=$(lsappinfo info -only name -app "$(lsappinfo front 2>/dev/null)" 2>/dev/null | cut -d'"' -f4)
+if [ -n "$FRONT_APP" ]; then
+  echo "$FRONT_APP" > "$STATE_DIR/recent_${FOCUSED:-1}"
+fi
+
+ARGS=()
+for sid in {1..10}; do
+  if [ "$sid" -eq "${FOCUSED:-1}" ]; then
+    ARGS+=(
+      --set "space.$sid"
+      icon.color=0xffffffff
+      icon.highlight_color=0xffffffff
+      icon.highlight=off
+      label.color=0xffffffff
+      label.highlight_color=0xffffffff
+      label.highlight=off
+      background.color=0x38ffffff
+      background.border_color=0x55ffffff
+      background.border_width=1
+      background.drawing=on
+    )
+  else
+    ARGS+=(
+      --set "space.$sid"
+      icon.color=0x90ffffff
+      icon.highlight_color=0xffffffff
+      icon.highlight=off
+      label.color=0x90ffffff
+      label.highlight_color=0xffffffff
+      label.highlight=off
+      background.color=0x14ffffff
+      background.border_color=0x20ffffff
+      background.border_width=1
+      background.drawing=on
+    )
+  fi
+done
+sketchybar "${ARGS[@]}"
+
+for sid in {1..10}; do
+  update_space_label "$sid"
+done

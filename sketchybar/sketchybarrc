@@ -58,8 +58,7 @@ sketchybar --add item space_observer left \
   --set space_observer \
     drawing=off \
     updates=on \
-    update_freq=5 \
     script="$PLUGIN_DIR/workspace.sh" \
-  --subscribe space_observer space_change space_windows_change front_app_switched display_change system_woke
+  --subscribe space_observer space_change space_windows_change front_app_switched display_change
 
 "$PLUGIN_DIR/workspace.sh"
