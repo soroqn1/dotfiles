@@ -1,5 +1,9 @@
 return {
   "nvim-neo-tree/neo-tree.nvim",
+  keys = {
+    { "<leader>e", "<cmd>Neotree toggle left<cr>", desc = "Toggle File Explorer (Side)" },
+    { "<leader>E", "<cmd>Neotree toggle float<cr>", desc = "Toggle File Explorer (Full/Float)" },
+  },
   opts = {
     filesystem = {
       filtered_items = {
@@ -13,7 +17,14 @@ return {
       },
     },
     window = {
+      position = "left",
+      width = 32,
       mappings = {
+        ["q"] = "close_window",
+        ["<esc>"] = "close_window",
+        ["h"] = "close_node",
+        ["l"] = "open",
+        ["<cr>"] = "open",
         ["n"] = "add",
         ["Y"] = function(state)
           local node = state.tree:get_node()

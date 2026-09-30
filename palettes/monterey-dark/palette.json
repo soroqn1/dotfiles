@@ -1,0 +1,51 @@
+{
+  "name": "monterey-dark",
+  "displayName": "macOS Monterey Dark (Black Layers)",
+  "sourceWallpaper": "/Users/soroqn/Downloads/macos-monterey-stock-black-dark-mode-layers-5k-6016x6016-5889.jpg",
+  "type": "dark",
+  "ui": {
+    "background": "#121214",
+    "backgroundDark": "#0a0a0c",
+    "backgroundLight": "#1c1c1f",
+    "surface": "#1c1c1f",
+    "surfaceActive": "#28282d",
+    "border": "#323238",
+    "borderActive": "#0a84ff",
+    "selection": "#2c3240",
+    "cursor": "#0a84ff"
+  },
+  "text": {
+    "foreground": "#f0f0f2",
+    "foregroundBright": "#ffffff",
+    "foregroundMuted": "#8e8e93",
+    "foregroundSubtle": "#636366"
+  },
+  "accents": {
+    "primary": "#0a84ff",
+    "secondary": "#30d158",
+    "tertiary": "#ffd60a",
+    "coral": "#ff453a",
+    "periwinkle": "#bf5af2",
+    "glow": "#64d2ff",
+    "orange": "#ff9f0a",
+    "pink": "#ff375f"
+  },
+  "ansi": {
+    "black": "#1c1c1f",
+    "red": "#ff453a",
+    "green": "#30d158",
+    "yellow": "#ffd60a",
+    "blue": "#0a84ff",
+    "magenta": "#bf5af2",
+    "cyan": "#64d2ff",
+    "white": "#e1e1e6",
+    "brightBlack": "#48484a",
+    "brightRed": "#ff6961",
+    "brightGreen": "#4cd964",
+    "brightYellow": "#ffe033",
+    "brightBlue": "#409cff",
+    "brightMagenta": "#da8fff",
+    "brightCyan": "#8ae0ff",
+    "brightWhite": "#ffffff"
+  }
+}

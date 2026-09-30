@@ -1,0 +1,49 @@
+{
+  "name": "luminous-lake",
+  "displayName": "Luminous Lake & Water Lily",
+  "sourceWallpaper": "/Users/soroqn/Downloads/GBTQde2bIAAuGKB.jpeg",
+  "type": "dark",
+  "ui": {
+    "background": "#1c2f33",
+    "backgroundDark": "#16262a",
+    "backgroundLight": "#243e43",
+    "surface": "#243e43",
+    "surfaceActive": "#30535a",
+    "border": "#426e76",
+    "borderActive": "#5bcde0",
+    "selection": "#30535a",
+    "cursor": "#6fe7f5"
+  },
+  "text": {
+    "foreground": "#ebf7f7",
+    "foregroundBright": "#ffffff",
+    "foregroundMuted": "#78a3a8",
+    "foregroundSubtle": "#4a747b"
+  },
+  "accents": {
+    "primary": "#5bcde0",
+    "secondary": "#6bb389",
+    "tertiary": "#f3c36d",
+    "coral": "#f16c44",
+    "periwinkle": "#8d9bf4",
+    "glow": "#8de6f5"
+  },
+  "ansi": {
+    "black": "#243e43",
+    "red": "#f16c44",
+    "green": "#6bb389",
+    "yellow": "#f3c36d",
+    "blue": "#5299b8",
+    "magenta": "#8d9bf4",
+    "cyan": "#5bcde0",
+    "white": "#ebf7f7",
+    "brightBlack": "#426e76",
+    "brightRed": "#f88b68",
+    "brightGreen": "#86d1a5",
+    "brightYellow": "#fbe297",
+    "brightBlue": "#74bad9",
+    "brightMagenta": "#aeb8ff",
+    "brightCyan": "#8de6f5",
+    "brightWhite": "#ffffff"
+  }
+}

@@ -20,7 +20,7 @@ return {
           end
           return ""
         end,
-        color = { fg = "#7aa2f7" }, -- Tokyo Night blue color
+        color = { fg = "#0a84ff" }, -- Monterey glow blue
       },
     }
   end,

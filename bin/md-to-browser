@@ -31,7 +31,7 @@ if not os.path.exists(decoded_path):
 
 pandoc_path = shutil.which('pandoc')
 if not pandoc_path:
-    sys.stderr.write("Ошибка: pandoc не установлен. Установите его с помощью: brew install pandoc\n")
+    sys.stderr.write("Error: pandoc is not installed. Install it with: brew install pandoc\n")
     sys.exit(1)
 
 config_dir = os.path.expanduser('~/.config/md-to-browser')

@@ -12,7 +12,7 @@ fish_add_path /Users/soroqn/.antigravity-ide/antigravity-ide/bin
 
 # Integrations
 source ~/.orbstack/shell/init2.fish 2>/dev/null || :
-source "/Users/soroqn/.openclaw/completions/openclaw.fish"
+test -f ~/.openclaw/completions/openclaw.fish; and source ~/.openclaw/completions/openclaw.fish
 
 # atuin — enhanced history (Ctrl+R)
 atuin init fish | source
@@ -24,3 +24,20 @@ zoxide init fish | source
 abbr -a v nvim
 abbr -a lg lazygit
 abbr -a lzd lazydocker
+
+# Custom greeting
+function fish_greeting
+    if git rev-parse --is-inside-work-tree >/dev/null 2>&1
+        if not onefetch 2>/dev/null
+            echo "Welcome to fish, the friendly interactive shell"
+            echo "Type "(set_color green)"help"(set_color normal)" for instructions on how to use fish"
+        end
+    else
+        echo "Welcome to fish, the friendly interactive shell"
+        echo "Type "(set_color green)"help"(set_color normal)" for instructions on how to use fish"
+    end
+end
+
+# bun
+set --export BUN_INSTALL "$HOME/.bun"
+set --export PATH $BUN_INSTALL/bin $PATH

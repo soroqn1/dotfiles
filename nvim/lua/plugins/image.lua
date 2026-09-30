@@ -8,7 +8,7 @@ return {
       backend = "kitty",
       integrations = {
         markdown = {
-          enabled = true,
+          enabled = false, -- Disabled to fix heavy lag on opening files with GIFs
           clear_in_insert_mode = false,
           download_remote_images = false,
           filetypes = { "markdown" },

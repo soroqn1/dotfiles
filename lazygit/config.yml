@@ -1,0 +1,22 @@
+gui:
+  nerdFontsVersion: ""
+  showFileTree: true
+  mouseEvents: true
+
+git:
+  paging:
+    colorArg: always
+    pager: delta --dark --paging=never
+
+# <c-g> on files panel: generate commit message via Copilot, open editor to review/edit
+customCommands:
+  - key: "<c-g>"
+    context: "files"
+    description: "AI commit message (Copilot)"
+    command: >-
+      MSG=$(~/.local/bin/copilot-commit.sh 2>&1) &&
+      echo "$MSG" > /tmp/ai_commit_msg.txt &&
+      git commit --edit --file=/tmp/ai_commit_msg.txt
+    subprocess: true
+    after:
+      refreshMain: true

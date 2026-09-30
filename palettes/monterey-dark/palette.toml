@@ -1,0 +1,54 @@
+# macOS Monterey Dark (Black Layers) Theme Palette
+# Extracted directly from wallpaper /Users/soroqn/Downloads/macos-monterey-stock-black-dark-mode-layers-5k-6016x6016-5889.jpg
+
+[meta]
+name = "monterey-dark"
+display_name = "macOS Monterey Dark (Black Layers)"
+source = "/Users/soroqn/Downloads/macos-monterey-stock-black-dark-mode-layers-5k-6016x6016-5889.jpg"
+type = "dark"
+
+[ui]
+background = "#121214"
+background_dark = "#0a0a0c"
+background_light = "#1c1c1f"
+surface = "#1c1c1f"
+surface_active = "#28282d"
+border = "#323238"
+border_active = "#0a84ff"
+selection = "#2c3240"
+cursor = "#0a84ff"
+
+[text]
+foreground = "#f0f0f2"
+foreground_bright = "#ffffff"
+foreground_muted = "#8e8e93"
+foreground_subtle = "#636366"
+
+[accents]
+primary = "#0a84ff"     # Monterey System Blue
+secondary = "#30d158"   # Apple System Green
+tertiary = "#ffd60a"    # Apple System Yellow
+coral = "#ff453a"       # Apple System Red
+periwinkle = "#bf5af2"  # Apple System Purple
+glow = "#64d2ff"        # Monterey System Cyan / Aqua
+orange = "#ff9f0a"      # Apple System Orange
+pink = "#ff375f"        # Apple System Pink
+
+[palette]
+# ANSI 16 Colors
+0 = "#1c1c1f"  # Black
+1 = "#ff453a"  # Red
+2 = "#30d158"  # Green
+3 = "#ffd60a"  # Yellow
+4 = "#0a84ff"  # Blue
+5 = "#bf5af2"  # Magenta
+6 = "#64d2ff"  # Cyan
+7 = "#e1e1e6"  # White
+8 = "#48484a"  # Bright Black
+9 = "#ff6961"  # Bright Red
+10 = "#4cd964" # Bright Green
+11 = "#ffe033" # Bright Yellow
+12 = "#409cff" # Bright Blue
+13 = "#da8fff" # Bright Magenta
+14 = "#8ae0ff" # Bright Cyan
+15 = "#ffffff" # Bright White

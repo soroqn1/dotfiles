@@ -13,8 +13,23 @@ My personal configuration files for everyday development.
 | [tmux](https://github.com/tmux/tmux) | Terminal multiplexer |
 | [atuin](https://atuin.sh) | Shell history (fuzzy, Ctrl+R) |
 | [zoxide](https://github.com/ajeetdsouza/zoxide) | Smart directory jumping (`z`) |
-| [AeroSpace](https://nikitabobko.github.io/AeroSpace/) | i3-like tiling window manager for macOS |
+| [yabai](https://github.com/koekeishiya/yabai) | Tiling window manager for macOS (bsp) |
+| [skhd](https://github.com/koekeishiya/skhd) | Simple hotkey daemon for macOS |
+| [JankyBorders](https://github.com/FelixKratz/JankyBorders) | Window borders with layout-aware dynamic colors |
 | [SketchyBar](https://felixkratz.github.io/SketchyBar/) | Custom macOS status bar widget |
+| [lazygit](https://github.com/jesseduffield/lazygit) | Terminal UI for git with Copilot commit generation |
+
+## Window management keybindings (skhd)
+
+| Key | Action |
+| --- | ------ |
+| `Ctrl+←↓↑→` | Focus window in direction |
+| `Ctrl+Shift+←↓↑→` | Swap/warp window in direction |
+| `Ctrl+Alt+←↓↑→` | Resize split |
+| `Ctrl+Shift+1..9` | Move window to space & follow focus |
+| `Ctrl+Shift+0` | Balance all window sizes |
+| `Ctrl+Shift+Space` | Toggle float |
+| `Ctrl+Shift+r` | Restart yabai and skhd services |
 
 ## Neovim keybindings
 
@@ -35,6 +50,8 @@ My personal configuration files for everyday development.
 | --- | ------ |
 | `Ctrl+h/j/k/l` | Move between splits |
 | `Ctrl+↑↓←→` | Resize split |
+| `<leader>wc` | Close current split |
+| `<leader>wo` | Close all other splits |
 
 ### Diagnostics
 
@@ -44,7 +61,7 @@ My personal configuration files for everyday development.
 | `]d` / `[d` | Next / prev diagnostic |
 | `<leader>D` | Show diagnostic float |
 
-### Git (gitsigns)
+### Git (gitsigns / diffview)
 
 | Key | Action |
 | --- | ------ |
@@ -53,8 +70,11 @@ My personal configuration files for everyday development.
 | `<leader>gs` | Stage hunk |
 | `<leader>gr` | Reset hunk |
 | `<leader>gb` | Blame line |
+| `<leader>gd` | Open Diffview |
+| `<leader>gD` | Close Diffview |
+| `<leader>gh` | Diffview file history |
 
-### Editor
+### Editor & Search
 
 | Key | Action |
 | --- | ------ |
@@ -62,20 +82,21 @@ My personal configuration files for everyday development.
 | `J/K` (visual) | Move selection down / up |
 | `p` (visual) | Paste without losing clipboard |
 | `Ctrl+J` | Accept Copilot suggestion |
-| `Ctrl+p` | Search files by name |
-| `Ctrl+f` | Search text in current file |
-| `Ctrl+g` | Search text in project |
+| `Ctrl+p` / `<leader>ff` | Search files by name (Telescope) |
+| `Ctrl+g` / `<leader>fg` | Search text in project (Telescope) |
+| `Ctrl+f` / `<leader>fc` | Search text in current buffer |
 | `Ctrl+a` | Select all text |
+| `<leader>dl` | Lazydocker float terminal |
 
 ### Explorer (Neo-tree)
 
 | Key | Action |
 | --- | ------ |
-| `<leader>e` | Open/toggle explorer |
+| `<leader>e` | Toggle file explorer (side) |
+| `<leader>E` | Toggle file explorer (floating) |
+| `h` / `l` | Collapse / expand folder |
 | `n` | Create new file/folder (end with `/` for folder) |
 | `Y` (Shift+y) | Copy file path or filename to clipboard |
-
-
 
 ## Fish abbreviations
 
@@ -97,6 +118,10 @@ ln -sf ~/dotfiles/nvim ~/.config/nvim
 ln -sf ~/dotfiles/atuin ~/.config/atuin
 ln -sf ~/dotfiles/tmux/tmux.conf ~/.tmux.conf
 ln -sf ~/dotfiles/sketchybar ~/.config/sketchybar
+ln -sf ~/dotfiles/yabai ~/.config/yabai
+ln -sf ~/dotfiles/skhd ~/.config/skhd
+ln -sf ~/dotfiles/borders ~/.config/borders
+ln -sf ~/dotfiles/lazygit ~/.config/lazygit
 ln -sf ~/dotfiles/bin/copilot-commit.sh ~/.local/bin/copilot-commit.sh
 ```
 

@@ -1,0 +1,62 @@
+# ---------------------------------------------------------
+# Window Focus: Ctrl + Arrow Keys
+# ---------------------------------------------------------
+ctrl - left  : yabai -m window --focus west
+ctrl - down  : yabai -m window --focus south
+ctrl - up    : yabai -m window --focus north
+ctrl - right : yabai -m window --focus east
+
+# ---------------------------------------------------------
+# Window Swap/Warp: Ctrl + Shift + Arrow Keys
+# ---------------------------------------------------------
+ctrl + shift - left  : yabai -m window --warp west
+ctrl + shift - down  : yabai -m window --warp south
+ctrl + shift - up    : yabai -m window --warp north
+ctrl + shift - right : yabai -m window --warp east
+
+# ---------------------------------------------------------
+# Window Resize: Ctrl + Alt + Arrow Keys
+# ---------------------------------------------------------
+ctrl + alt - left  : yabai -m window --resize left:-20:0  || yabai -m window --resize right:-20:0
+ctrl + alt - down  : yabai -m window --resize bottom:0:20 || yabai -m window --resize top:0:20
+ctrl + alt - up    : yabai -m window --resize top:0:-20   || yabai -m window --resize bottom:0:-20
+ctrl + alt - right : yabai -m window --resize right:20:0  || yabai -m window --resize left:20:0
+
+# ---------------------------------------------------------
+# Move Window to Space & Follow Focus: Ctrl + Shift + Number
+# Using hardware keycodes (0x12..0x19) so it works reliably across EN and RU layouts
+# ---------------------------------------------------------
+ctrl + shift - 0x12 : ~/.config/yabai/move_and_focus.sh 1
+ctrl + shift - 0x13 : ~/.config/yabai/move_and_focus.sh 2
+ctrl + shift - 0x14 : ~/.config/yabai/move_and_focus.sh 3
+ctrl + shift - 0x15 : ~/.config/yabai/move_and_focus.sh 4
+ctrl + shift - 0x17 : ~/.config/yabai/move_and_focus.sh 5
+ctrl + shift - 0x16 : ~/.config/yabai/move_and_focus.sh 6
+ctrl + shift - 0x1A : ~/.config/yabai/move_and_focus.sh 7
+ctrl + shift - 0x1C : ~/.config/yabai/move_and_focus.sh 8
+ctrl + shift - 0x19 : ~/.config/yabai/move_and_focus.sh 9
+
+# Fallback literal definitions
+ctrl + shift - 1 : ~/.config/yabai/move_and_focus.sh 1
+ctrl + shift - 2 : ~/.config/yabai/move_and_focus.sh 2
+ctrl + shift - 3 : ~/.config/yabai/move_and_focus.sh 3
+ctrl + shift - 4 : ~/.config/yabai/move_and_focus.sh 4
+ctrl + shift - 5 : ~/.config/yabai/move_and_focus.sh 5
+ctrl + shift - 6 : ~/.config/yabai/move_and_focus.sh 6
+ctrl + shift - 7 : ~/.config/yabai/move_and_focus.sh 7
+ctrl + shift - 8 : ~/.config/yabai/move_and_focus.sh 8
+ctrl + shift - 9 : ~/.config/yabai/move_and_focus.sh 9
+
+# ---------------------------------------------------------
+# Layout Controls & Service Restart
+# ---------------------------------------------------------
+
+# Balance size of all windows
+ctrl + shift - 0x1D : yabai -m space --balance
+ctrl + shift - 0    : yabai -m space --balance
+
+# Toggle float on focused window
+ctrl + shift - space : yabai -m window --toggle float --grid 4:4:1:1:2:2
+
+# Restart yabai and skhd services
+ctrl + shift - r : yabai --restart-service && skhd --restart-service

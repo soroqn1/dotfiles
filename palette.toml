@@ -1,0 +1,52 @@
+# Luminous Lake & Water Lily Theme Palette
+# Extracted directly from wallpaper /Users/soroqn/Downloads/GBTQde2bIAAuGKB.jpeg
+
+[meta]
+name = "luminous-lake"
+display_name = "Luminous Lake & Water Lily"
+source = "/Users/soroqn/Downloads/GBTQde2bIAAuGKB.jpeg"
+type = "dark"
+
+[ui]
+background = "#1c2f33"
+background_dark = "#16262a"
+background_light = "#243e43"
+surface = "#243e43"
+surface_active = "#30535a"
+border = "#426e76"
+border_active = "#5bcde0"
+selection = "#30535a"
+cursor = "#6fe7f5"
+
+[text]
+foreground = "#ebf7f7"
+foreground_bright = "#ffffff"
+foreground_muted = "#78a3a8"
+foreground_subtle = "#4a747b"
+
+[accents]
+primary = "#5bcde0"     # Magic / Water Glow Cyan
+secondary = "#6bb389"   # Lotus Green
+tertiary = "#f3c36d"    # Golden Sun Glints
+coral = "#f16c44"       # Earring Coral Red
+periwinkle = "#8d9bf4"  # Water Lily Purple
+glow = "#8de6f5"        # Bright Ripple Cyan
+
+[palette]
+# ANSI 16 Colors
+0 = "#243e43"  # Black
+1 = "#f16c44"  # Red
+2 = "#6bb389"  # Green
+3 = "#f3c36d"  # Yellow
+4 = "#5299b8"  # Blue
+5 = "#8d9bf4"  # Magenta
+6 = "#5bcde0"  # Cyan
+7 = "#ebf7f7"  # White
+8 = "#426e76"  # Bright Black
+9 = "#f88b68"  # Bright Red
+10 = "#86d1a5" # Bright Green
+11 = "#fbe297" # Bright Yellow
+12 = "#74bad9" # Bright Blue
+13 = "#aeb8ff" # Bright Magenta
+14 = "#8de6f5" # Bright Cyan
+15 = "#ffffff" # Bright White

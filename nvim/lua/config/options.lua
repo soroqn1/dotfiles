@@ -4,6 +4,9 @@
 
 vim.o.winborder = "rounded"
 
+-- Use basedpyright for Python LSP
+vim.g.lazyvim_python_lsp = "basedpyright"
+
 vim.opt.relativenumber = false
 vim.opt.number = true
 

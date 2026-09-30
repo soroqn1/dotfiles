@@ -1,0 +1,27 @@
+# Ghostty Theme: Luminous Lake & Water Lily (Frieren Aesthetic)
+# Generated directly from wallpaper /Users/soroqn/Downloads/GBTQde2bIAAuGKB.jpeg
+
+background = 1c2f33
+foreground = ebf7f7
+cursor-color = 6fe7f5
+cursor-text = 1c2f33
+selection-background = 30535a
+selection-foreground = ffffff
+
+# ANSI 16 Colors (Calibrated to wallpaper lighting)
+palette = 0=#243e43
+palette = 1=#f16c44
+palette = 2=#6bb389
+palette = 3=#f3c36d
+palette = 4=#5299b8
+palette = 5=#8d9bf4
+palette = 6=#5bcde0
+palette = 7=#ebf7f7
+palette = 8=#426e76
+palette = 9=#f88b68
+palette = 10=#86d1a5
+palette = 11=#fbe297
+palette = 12=#74bad9
+palette = 13=#aeb8ff
+palette = 14=#8de6f5
+palette = 15=#ffffff

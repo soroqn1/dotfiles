@@ -1,0 +1,27 @@
+# Ghostty Theme: macOS Monterey Dark (Black Layers)
+# Generated directly from wallpaper /Users/soroqn/Downloads/macos-monterey-stock-black-dark-mode-layers-5k-6016x6016-5889.jpg
+
+background = 121214
+foreground = f0f0f2
+cursor-color = 0a84ff
+cursor-text = 121214
+selection-background = 2c3240
+selection-foreground = ffffff
+
+# ANSI 16 Colors (Apple HIG Dark System Colors)
+palette = 0=#1c1c1f
+palette = 1=#ff453a
+palette = 2=#30d158
+palette = 3=#ffd60a
+palette = 4=#0a84ff
+palette = 5=#bf5af2
+palette = 6=#64d2ff
+palette = 7=#e1e1e6
+palette = 8=#48484a
+palette = 9=#ff6961
+palette = 10=#4cd964
+palette = 11=#ffe033
+palette = 12=#409cff
+palette = 13=#da8fff
+palette = 14=#8ae0ff
+palette = 15=#ffffff

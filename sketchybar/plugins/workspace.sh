@@ -13,7 +13,6 @@ if [ "$1" = "click" ]; then
       --set "space.$TARGET_SID" background.color=0x38ffffff background.border_color=0x55ffffff icon.color=0xffffffff label.color=0xffffffff icon.highlight=off
   fi
 
-  # macOS Mission Control keycodes (^1..^0)
   case "$TARGET_SID" in
     1) KEY=18 ;; 2) KEY=19 ;; 3) KEY=20 ;; 4) KEY=21 ;; 5) KEY=23 ;;
     6) KEY=22 ;; 7) KEY=26 ;; 8) KEY=28 ;; 9) KEY=25 ;; 10) KEY=29 ;;
@@ -104,6 +103,10 @@ declare -A ICON_MAP=(
 
   # Communication & Social
   ["Telegram"]=":telegram:"
+  ["AyuGram"]=":telegram:"
+  ["ayugram"]=":telegram:"
+  ["YouTube"]=":youtube:"
+  ["youtube"]=":youtube:"
   ["Discord"]=":discord:"
   ["Discord Canary"]=":discord:"
   ["Slack"]=":slack:"
@@ -224,7 +227,8 @@ get_icon() {
         *dia*) icon=":dia:" ;;
         *chrome*) icon=":google_chrome:" ;;
         *ghostty*) icon=":ghostty:" ;;
-        *telegram*) icon=":telegram:" ;;
+        *telegram*|*ayugram*) icon=":telegram:" ;;
+        *youtube*) icon=":youtube:" ;;
         *obsidian*) icon=":obsidian:" ;;
         *safari*) icon=":safari:" ;;
         *firefox*) icon=":firefox:" ;;
@@ -274,8 +278,7 @@ update_space_label() {
     '
     ["loginwindow", "WindowServer", "Dock", "SystemUIServer", "ControlCenter", "NotificationCenter", "Spotlight", "universalaccessd"] as $sys |
     (($apps | to_entries | map(select(.value > 0)) | map(.key)) - $sys) as $raw |
-    (if ($raw | length) == 0 and $recent != "" and ($sys | index($recent) | not) then [$recent] else $raw end) as $all |
-    (if ($all | length) > 1 then ($all - ["Finder"]) else $all end) as $filtered |
+    (if ($raw | length) > 1 then ($raw - ["Finder"]) else $raw end) as $filtered |
     (if ($recent != "" and ($filtered | index($recent))) then
        [$recent] + ($filtered - [$recent])
      else
@@ -312,7 +315,7 @@ update_space_label() {
 if [ "$SENDER" = "front_app_switched" ]; then
   APP="$INFO"
   case "$APP" in
-    ""|loginwindow|WindowServer|Dock|SystemUIServer|ControlCenter|NotificationCenter|Spotlight|universalaccessd)
+    ""|Finder|loginwindow|WindowServer|Dock|SystemUIServer|ControlCenter|NotificationCenter|Spotlight|universalaccessd)
       exit 0
       ;;
   esac
@@ -340,6 +343,17 @@ if [ "$SENDER" = "space_windows_change" ]; then
 fi
 
 # Initial startup / sync
+if command -v yabai >/dev/null 2>&1; then
+  for sid in {1..10}; do
+    echo "{}" > "$STATE_DIR/apps_$sid"
+  done
+  while IFS= read -r row; do
+    s=$(jq -r '.space' <<< "$row")
+    a=$(jq -c '.apps' <<< "$row")
+    [ -n "$s" ] && echo "$a" > "$STATE_DIR/apps_$s"
+  done < <(yabai -m query --windows 2>/dev/null | jq -c 'group_by(.space)[] | {space: .[0].space, apps: (group_by(.app) | map({key: .[0].app, value: length}) | from_entries)}' 2>/dev/null)
+fi
+
 FOCUSED=$(defaults read com.apple.spaces SpacesDisplayConfiguration 2>/dev/null | awk '
 /Monitors =/ { in_monitors=1 }
 in_monitors && /"Current Space"/ { in_curr=1 }
@@ -356,7 +370,7 @@ END { print (curr ? curr : 1) }
 echo "${FOCUSED:-1}" > "$STATE_DIR/focused"
 
 FRONT_APP=$(lsappinfo info -only name -app "$(lsappinfo front 2>/dev/null)" 2>/dev/null | cut -d'"' -f4)
-if [ -n "$FRONT_APP" ]; then
+if [ -n "$FRONT_APP" ] && [ "$FRONT_APP" != "Finder" ]; then
   echo "$FRONT_APP" > "$STATE_DIR/recent_${FOCUSED:-1}"
 fi
 

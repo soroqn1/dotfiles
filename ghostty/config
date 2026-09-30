@@ -1,5 +1,6 @@
 font-family = "JetBrains Mono"
 font-size = 14
+theme = monterey-dark
 
 # left only — keeps right Option for special chars
 macos-option-as-alt = left
@@ -15,3 +16,9 @@ cursor-style-blink = true
 
 # quake-mode: requires Accessibility permission in macOS
 keybind = global:cmd+ctrl+shift+j=toggle_visibility
+
+# Tab styling: internal tabs to prevent tiling managers from splitting tabs into windows
+macos-titlebar-style = tabs
+
+background-opacity = 0.92
+background-blur = true
