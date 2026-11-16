@@ -9,10 +9,6 @@ sudo yabai --load-sa
 # Route newly created windows to the current space under mouse
 yabai -m signal --add event=window_created action='yabai -m window "${YABAI_WINDOW_ID}" --space mouse'
 
-# Automatically switch to existing window on 1st click in Dock / Cmd+Tab
-yabai -m signal --add event=application_activated action='~/.config/yabai/handle_app_activate.sh'
-yabai -m signal --add event=application_front_switched action='~/.config/yabai/handle_app_activate.sh'
-
 # ---------------------------------------------------------
 # Layout & Compact Spacing (5pt - Optimized for 13" display)
 # ---------------------------------------------------------
