@@ -1,12 +1,4 @@
 # ---------------------------------------------------------
-# Window Focus: Ctrl + Arrow Keys
-# ---------------------------------------------------------
-ctrl - left  : yabai -m window --focus west
-ctrl - down  : yabai -m window --focus south
-ctrl - up    : yabai -m window --focus north
-ctrl - right : yabai -m window --focus east
-
-# ---------------------------------------------------------
 # Window Swap/Warp: Ctrl + Shift + Arrow Keys
 # ---------------------------------------------------------
 ctrl + shift - left  : yabai -m window --warp west
@@ -55,8 +47,27 @@ ctrl + shift - 9 : ~/.config/yabai/move_and_focus.sh 9
 ctrl + shift - 0x1D : yabai -m space --balance
 ctrl + shift - 0    : yabai -m space --balance
 
-# Toggle float on focused window
-ctrl + shift - space : yabai -m window --toggle float --grid 4:4:1:1:2:2
+# Toggle centered float (Wayland scratchpad style: 66% width/height centered)
+ctrl + shift - space : yabai -m window --toggle float --grid 6:6:1:1:4:4
 
-# Restart yabai and skhd services
-ctrl + shift - r : yabai --restart-service && skhd --restart-service
+# Toggle Stack layout (Tabs mode for 13" screen)
+ctrl + alt - 0x01 : yabai -m space --layout $([ "$(yabai -m query --spaces --space | jq -r .type)" = "bsp" ] && echo "stack" || echo "bsp")
+ctrl + alt - s    : yabai -m space --layout $([ "$(yabai -m query --spaces --space | jq -r .type)" = "bsp" ] && echo "stack" || echo "bsp")
+
+# Cycle through windows in stack / space (Like flipping pages in a book)
+ctrl - 0x26 : yabai -m window --focus stack.next || yabai -m window --focus next
+ctrl - j    : yabai -m window --focus stack.next || yabai -m window --focus next
+
+ctrl - 0x28 : yabai -m window --focus stack.prev || yabai -m window --focus prev
+ctrl - k    : yabai -m window --focus stack.prev || yabai -m window --focus prev
+
+# Toggle Yabai service (Full On / Off toggle)
+ctrl + shift - 0x10 : ~/.config/yabai/toggle.sh toggle
+ctrl + shift - y    : ~/.config/yabai/toggle.sh toggle
+
+# Toggle tiling layout (BSP <-> Float without stopping daemon)
+ctrl + alt - 0x10   : ~/.config/yabai/toggle.sh layout
+ctrl + alt - y      : ~/.config/yabai/toggle.sh layout
+
+# Restart yabai and skhd services (with visual notification)
+ctrl + shift - r : launchctl kickstart -k "gui/$(id -u)/com.asmvik.yabai" && launchctl kickstart -k "gui/$(id -u)/com.koekeishiya.skhd" && osascript -e 'display notification "Yabai and SKHD restarted" with title "Tiling WM" sound name "Pop"'

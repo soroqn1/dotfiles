@@ -1,20 +1,27 @@
 #!/usr/bin/env sh
 
 # ---------------------------------------------------------
-# Scripting Addition (SA) Loader
+# Scripting Addition (SA) Loader & Signals
 # ---------------------------------------------------------
 yabai -m signal --add event=dock_did_restart action="sudo yabai --load-sa"
 sudo yabai --load-sa
 
+# Route newly created windows to the current space under mouse
+yabai -m signal --add event=window_created action='yabai -m window "${YABAI_WINDOW_ID}" --space mouse'
+
+# Automatically switch to existing window on 1st click in Dock / Cmd+Tab
+yabai -m signal --add event=application_activated action='~/.config/yabai/handle_app_activate.sh'
+yabai -m signal --add event=application_front_switched action='~/.config/yabai/handle_app_activate.sh'
+
 # ---------------------------------------------------------
-# Layout & Balanced Spacing (8px - optimal for JankyBorders)
+# Layout & Compact Spacing (5pt - Optimized for 13" display)
 # ---------------------------------------------------------
 yabai -m config layout                      bsp
-yabai -m config top_padding                 8
-yabai -m config bottom_padding              8
-yabai -m config left_padding                8
-yabai -m config right_padding               8
-yabai -m config window_gap                  8
+yabai -m config top_padding                 5
+yabai -m config bottom_padding              5
+yabai -m config left_padding                5
+yabai -m config right_padding               5
+yabai -m config window_gap                  5
 
 # ---------------------------------------------------------
 # Window Placement & Focus
@@ -24,10 +31,9 @@ yabai -m config focus_follows_mouse         off
 yabai -m config mouse_follows_focus         off
 
 # ---------------------------------------------------------
-# Smooth Performance & Latency Reduction
+# Instant Response (0ms - No Stutter, No Tearing)
 # ---------------------------------------------------------
-yabai -m config window_animation_duration   0.2
-yabai -m config window_animation_easing     ease_out_circ
+yabai -m config window_animation_duration   0.0
 
 # Disable shadows for tiled windows, keep for floating
 yabai -m config window_shadow               float
@@ -48,10 +54,16 @@ yabai -m rule --add app="^System Settings$" manage=off
 yabai -m rule --add app="^System Information$" manage=off
 yabai -m rule --add app="^Calculator$" manage=off
 yabai -m rule --add app="^Archive Utility$" manage=off
-yabai -m rule --add app="^Finder$" title="(Copy|Move|Trash)" manage=off
 yabai -m rule --add app="^Activity Monitor$" manage=off
+yabai -m rule --add app="^Preview$" manage=off grid=956:1470:235:128:1000:700
+yabai -m rule --add subrole="^AXDialog$" manage=off
+yabai -m rule --add subrole="^AXSystemDialog$" manage=off
 
-# Zen Browser (Floating PiP & System Dialogs)
+# Floating Centered Apps (Wayland Scratchpad Style - Auto-reset on Cmd+W)
+yabai -m rule --add app="^Telegram$" manage=off grid=956:1470:188:113:1094:730
+yabai -m rule --add app="^Finder$" manage=off grid=956:1470:285:178:900:600
+yabai -m rule --add app="^Messages$" manage=off grid=12:12:2:1:8:10
+
+# Zen Browser (Floating PiP)
 yabai -m rule --add app="^Zen$" title="^Picture-in-Picture$" manage=off
-yabai -m rule --add app="^Zen$" subrole="^AXSystemDialog$" manage=off
 

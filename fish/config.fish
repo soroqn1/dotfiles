@@ -12,7 +12,6 @@ fish_add_path /Users/soroqn/.antigravity-ide/antigravity-ide/bin
 
 # Integrations
 source ~/.orbstack/shell/init2.fish 2>/dev/null || :
-test -f ~/.openclaw/completions/openclaw.fish; and source ~/.openclaw/completions/openclaw.fish
 
 # atuin — enhanced history (Ctrl+R)
 atuin init fish | source
@@ -24,6 +23,11 @@ zoxide init fish | source
 abbr -a v nvim
 abbr -a lg lazygit
 abbr -a lzd lazydocker
+abbr -a yt yabai-toggle
+abbr -a yon "yabai-toggle on"
+abbr -a yoff "yabai-toggle off"
+abbr -a yl "yabai-toggle layout"
+abbr -a ys "yabai-toggle status"
 
 # Custom greeting
 function fish_greeting

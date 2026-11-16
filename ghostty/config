@@ -7,7 +7,7 @@ macos-option-as-alt = left
 keybind = alt+left=unbind
 keybind = alt+right=unbind
 copy-on-select = true
-shell-integration = fish
+shell-integration = none
 
 confirm-close-surface = true
 mouse-hide-while-typing = true

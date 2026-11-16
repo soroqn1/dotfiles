@@ -20,38 +20,44 @@ sketchybar --default \
   icon.font="JetBrainsMono Nerd Font:Bold:12.0" \
   icon.color=0xffffffff \
   icon.highlight_color=0xffffffff \
-  icon.padding_left=7 \
-  icon.padding_right=7 \
+  icon.padding_left=6 \
+  icon.padding_right=6 \
   icon.y_offset=1 \
   label.drawing=off \
-  label.font="sketchybar-app-font:Regular:13.0" \
-  label.color=0xffffffff \
-  label.highlight_color=0xffffffff \
-  label.y_offset=1 \
-  padding_left=4 \
-  padding_right=4 \
+  padding_left=2 \
+  padding_right=2 \
   y_offset=1 \
-  background.height=23 \
-  background.corner_radius=6 \
+  background.height=20 \
+  background.corner_radius=5 \
   background.drawing=off
 
-sketchybar --remove '/space\..*/' space_observer 2>/dev/null || true
+sketchybar --remove '/space\..*/' spaces_capsule space_observer 2>/dev/null || true
 
 for sid in {1..10}; do
   sketchybar --add space "space.$sid" left \
     --set "space.$sid" \
       associated_space=$sid \
       icon="$sid" \
-      icon.color=0x90ffffff \
+      icon.color=0x75ffffff \
       icon.highlight_color=0xffffffff \
-      icon.padding_left=8 \
-      icon.padding_right=8 \
-      background.color=0x14ffffff \
-      background.border_color=0x20ffffff \
-      background.border_width=1 \
-      background.drawing=on \
+      icon.padding_left=6 \
+      icon.padding_right=6 \
+      padding_left=2 \
+      padding_right=2 \
+      label.drawing=off \
+      background.drawing=off \
       click_script="$PLUGIN_DIR/workspace.sh click $sid"
 done
+
+# Single unified glass capsule container for all spaces
+sketchybar --add bracket spaces_capsule '/space\..*/' \
+  --set spaces_capsule \
+    background.drawing=on \
+    background.color=0x18ffffff \
+    background.border_color=0x25ffffff \
+    background.border_width=1 \
+    background.corner_radius=7 \
+    background.height=24
 
 # Central observer for atomic batch updates across all spaces
 sketchybar --add item space_observer left \
@@ -59,6 +65,11 @@ sketchybar --add item space_observer left \
     drawing=off \
     updates=on \
     script="$PLUGIN_DIR/workspace.sh" \
-  --subscribe space_observer space_change space_windows_change front_app_switched display_change
+  --subscribe space_observer space_change display_change
 
 "$PLUGIN_DIR/workspace.sh"
+
+# Hide bar immediately if yabai is not running
+if ! pgrep -x yabai >/dev/null 2>&1; then
+  sketchybar --bar hidden=on
+fi
