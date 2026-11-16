@@ -50,6 +50,9 @@ ctrl + shift - 0    : yabai -m space --balance
 # Toggle centered float (Wayland scratchpad style: 66% width/height centered)
 ctrl + shift - space : yabai -m window --toggle float --grid 6:6:1:1:4:4
 
+# Center current floating window / dialog
+ctrl + alt - c : ~/.config/yabai/center_window.sh
+
 # Toggle Stack layout (Tabs mode for 13" screen)
 ctrl + alt - 0x01 : yabai -m space --layout $([ "$(yabai -m query --spaces --space | jq -r .type)" = "bsp" ] && echo "stack" || echo "bsp")
 ctrl + alt - s    : yabai -m space --layout $([ "$(yabai -m query --spaces --space | jq -r .type)" = "bsp" ] && echo "stack" || echo "bsp")
