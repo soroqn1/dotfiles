@@ -9,9 +9,8 @@ sudo yabai --load-sa
 # Route newly created windows to current space under mouse & auto-center modal dialogs
 yabai -m signal --add event=window_created action='~/.config/yabai/on_window_created.sh'
 
-# Scratchpad summon: follow to active space when opened ("закрыл и открылось там где нажал")
-yabai -m signal --add event=application_activated app="^Telegram$" action='~/.config/yabai/summon_scratchpad.sh Telegram'
-yabai -m signal --add event=application_activated app="^Finder$" action='~/.config/yabai/summon_scratchpad.sh Finder'
+# 1-Click App Switching & Scratchpad Summon ("закрыл и открылось там где нажал")
+yabai -m signal --add event=application_activated action='~/.config/yabai/on_app_activated.sh'
 
 # ---------------------------------------------------------
 # Layout & Compact Spacing (5pt - Optimized for 13" display)
