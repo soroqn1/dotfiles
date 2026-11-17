@@ -3,63 +3,65 @@
 CONFIG_DIR="$HOME/.config/sketchybar"
 PLUGIN_DIR="$CONFIG_DIR/plugins"
 
-# Anchor to the right of the MacBook notch (~825pt)
+# ---------------------------------------------------------
+# Bar Setup (Transparent overlay positioned beside native menubar)
+# ---------------------------------------------------------
 sketchybar --bar \
   height=32 \
   color=0x00000000 \
   border_width=0 \
   blur_radius=0 \
-  y_offset=2 \
+  y_offset=0 \
   margin=0 \
   padding_left=840 \
   padding_right=0 \
   position=top \
   topmost=window
 
+# ---------------------------------------------------------
+# Default Item Style (Native macOS Typography & Alignment)
+# ---------------------------------------------------------
 sketchybar --default \
-  icon.font="JetBrainsMono Nerd Font:Bold:12.0" \
-  icon.color=0xffffffff \
+  icon.font="SF Pro:Semibold:12.0" \
+  icon.color=0x55ffffff \
   icon.highlight_color=0xffffffff \
   icon.padding_left=6 \
   icon.padding_right=6 \
-  icon.y_offset=1 \
+  icon.y_offset=0 \
   label.drawing=off \
-  padding_left=2 \
-  padding_right=2 \
-  y_offset=1 \
-  background.height=20 \
-  background.corner_radius=5 \
+  padding_left=1 \
+  padding_right=1 \
+  y_offset=0 \
+  background.height=22 \
+  background.corner_radius=6 \
+  background.border_width=0 \
   background.drawing=off
 
+# Clean up previous items & brackets
 sketchybar --remove '/space\..*/' spaces_capsule space_observer 2>/dev/null || true
 
+# ---------------------------------------------------------
+# Spaces (Minimalist native numbers)
+# ---------------------------------------------------------
 for sid in {1..10}; do
   sketchybar --add space "space.$sid" left \
     --set "space.$sid" \
       associated_space=$sid \
       icon="$sid" \
-      icon.color=0x75ffffff \
+      icon.color=0x55ffffff \
       icon.highlight_color=0xffffffff \
       icon.padding_left=6 \
       icon.padding_right=6 \
-      padding_left=2 \
-      padding_right=2 \
+      padding_left=1 \
+      padding_right=1 \
       label.drawing=off \
       background.drawing=off \
       click_script="$PLUGIN_DIR/workspace.sh click $sid"
 done
 
-# Single unified glass capsule container for all spaces
-sketchybar --add bracket spaces_capsule '/space\..*/' \
-  --set spaces_capsule \
-    background.drawing=on \
-    background.color=0x18ffffff \
-    background.border_color=0x25ffffff \
-    background.border_width=1 \
-    background.corner_radius=7 \
-    background.height=24
-
-# Central observer for atomic batch updates across all spaces
+# ---------------------------------------------------------
+# Observer for space changes
+# ---------------------------------------------------------
 sketchybar --add item space_observer left \
   --set space_observer \
     drawing=off \
@@ -69,7 +71,7 @@ sketchybar --add item space_observer left \
 
 "$PLUGIN_DIR/workspace.sh"
 
-# Hide bar immediately if yabai is not running
+# Hide bar if yabai is not running
 if ! pgrep -x yabai >/dev/null 2>&1; then
   sketchybar --bar hidden=on
 fi
