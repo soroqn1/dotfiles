@@ -15,7 +15,6 @@ My personal configuration files for everyday development.
 | [zoxide](https://github.com/ajeetdsouza/zoxide) | Smart directory jumping (`z`) |
 | [yabai](https://github.com/koekeishiya/yabai) | Tiling window manager for macOS (bsp) |
 | [skhd](https://github.com/koekeishiya/skhd) | Simple hotkey daemon for macOS |
-| [JankyBorders](https://github.com/FelixKratz/JankyBorders) | Window borders with layout-aware dynamic colors |
 | [SketchyBar](https://felixkratz.github.io/SketchyBar/) | Custom macOS status bar widget |
 | [lazygit](https://github.com/jesseduffield/lazygit) | Terminal UI for git with Copilot commit generation |
 
@@ -120,7 +119,6 @@ ln -sf ~/dotfiles/tmux/tmux.conf ~/.tmux.conf
 ln -sf ~/dotfiles/sketchybar ~/.config/sketchybar
 ln -sf ~/dotfiles/yabai ~/.config/yabai
 ln -sf ~/dotfiles/skhd ~/.config/skhd
-ln -sf ~/dotfiles/borders ~/.config/borders
 ln -sf ~/dotfiles/lazygit ~/.config/lazygit
 ln -sf ~/dotfiles/bin/copilot-commit.sh ~/.local/bin/copilot-commit.sh
 ```
